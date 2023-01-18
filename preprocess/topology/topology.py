@@ -1,218 +1,164 @@
 #!/usr/bin/env python3
 # -- coding: utf-8 --
 
-#%%
-
 
 import numpy as np
 import matplotlib.pyplot as plt
-from skimage.morphology import disk
+plt.rcParams.update(plt.rcParamsDefault)
+from skimage.morphology import (
+                                square, rectangle, disk, cube,
+                                octahedron, ball
+                                )
 from scipy import ndimage
+
 import pandas as pd
-
-
+import random
+import os
+import math
+from matplotlib.patches import FancyArrowPatch, FancyArrow
+from mpl_toolkits.mplot3d import proj3d
+import shutil
+#%%
+  
 
 ###############################  FORMA 1  ################################
-
-
-lx=400
-ly=200
-sqr1 = np.zeros((ly, lx), dtype=np.uint8)
-
-#por = float(input('Porosidade: '))
-
-
-radio1 = 40
-circ1 = disk(radio1)
-
-
-x = int(lx/2)
-y = int(ly/2)
-
-sqr1[y-radio1:y+radio1, x-radio1:x+radio1] = circ1[:-1,:-1]
-
-
-x = 0
-y = 0
-
-sqr1[y:y+radio1, x:x+radio1] = circ1[radio1:-1,radio1:-1]
-
-x = lx-radio1
-y = ly-radio1
-
-sqr1[y:y+radio1, x:x+radio1] = circ1[:radio1,:radio1]
-
-
-x = lx
-y = 0
-
-sqr1[:radio1+1, x-radio1+1:x] = circ1[radio1:,1:radio1]
-
-x = 0
-y = ly
-
-sqr1[ly-radio1:ly, :radio1] = circ1[:radio1, radio1+1:]
-
-n = 1
-sqr1 = np.concatenate([sqr1]*n, axis = 0) 
-sqr1 = np.concatenate([sqr1]*n, axis = 1)
-
-############################  FORMA 2   ########################################
-lx2=int(lx/2)
-ly2=int(ly/2)
-
-sqr2 = np.zeros((ly2, lx2), dtype=np.uint8)
-
-radio2 = int(radio1/2)
-circ2 = disk(radio2)
-
-
-x = int(lx2/2)
-y = int(ly2/2)
-sqr2[y-radio2:y+radio2, x-radio2:x+radio2] = circ2[:-1,:-1]
-
-
-x = 0
-y = 0
-
-sqr2[y:y+radio2, x:x+radio2] = circ2[radio2:-1,radio2:-1]
-
-x = lx2-radio2
-y = ly2-radio2
-
-sqr2[y:y+radio2, x:x+radio2] = circ2[:radio2,:radio2]
-
-
-x = lx2
-y = 0
-
-sqr2[:radio2+1, x-radio2+1:x] = circ2[radio2:,1:radio2]
-
-x = 0
-y = ly2
-
-sqr2[ly2-radio2:ly2, :radio2] = circ2[:radio2, radio2+1:]
-
-
-sqr2 = np.concatenate([sqr2]*2*n, axis = 0) 
-sqr2 = np.concatenate([sqr2]*2*n, axis = 1)
-
-############################  FORMA 3   ########################################
-lx3=int(lx2/2)
-ly3=int(ly2/2)
-
-sqr3 = np.zeros((ly3, lx3), dtype=np.uint8)
-
-radio3 = int(radio2/2)
-circ3 = disk(radio3)
-
-
-x = int(lx3/2)
-y = int(ly3/2)
-sqr3[y-radio3:y+radio3, x-radio3:x+radio3] = circ3[:-1,:-1]
-
-
-x = 0
-y = 0
-
-sqr3[y:y+radio3, x:x+radio3] = circ3[radio3:-1,radio3:-1]
-
-x = lx3-radio3
-y = ly3-radio3
-
-sqr3[y:y+radio3, x:x+radio3] = circ3[:radio3,:radio3]
-
-
-x = lx3
-y = 0
-
-sqr3[:radio3+1, x-radio3+1:x] = circ3[radio3:,1:radio3]
-
-x = 0
-y = ly3
-
-sqr3[ly3-radio3:ly3, :radio3] = circ3[:radio3, radio3+1:]
-
-
-sqr3 = np.concatenate([sqr3]*4*n, axis = 0) 
-sqr3 = np.concatenate([sqr3]*4*n, axis = 1)
-
-############################  FORMA 4   ########################################
-lx4=int((lx3)/2)
-ly4=int(ly3/2)
-
-sqr4 = np.zeros((ly4, lx4), dtype=np.uint8)
-
-radio4 = int(radio3/2) 
-circ4 = disk(radio4) 
-
-
-x = int(lx4/2)
-y = int(ly4/2)
-sqr4[y-radio4:y+radio4, x-radio4:x+radio4] = circ4[:-1,:-1]
-
-
-x = 0
-y = 0
-
-sqr4[y:y+radio4, x:x+radio4] = circ4[radio4:-1,radio4:-1]
-
-x = lx4-radio4
-y = ly4-radio4
-
-sqr4[y:y+radio4, x:x+radio4] = circ4[:radio4,:radio4]
-
-
-x = lx4
-y = 0
-
-sqr4[:radio4+1, x-radio4+1:x] = circ4[radio4:,1:radio4]
-
-x = 0
-y = ly4
-
-sqr4[ly4-radio4:ly4, :radio4] = circ4[:radio4, radio4+1:]
-
-
-sqr4 = np.concatenate([sqr4]*8*n, axis = 0) 
-sqr4 = np.concatenate([sqr4]*8*n, axis = 1)
-
-############################     PLOT    ##################################
-sg1 = np.sum(sqr1 == 1)
-sp1 = np.sum(sqr1 == 0)
-porosity1 = sp1/(sp1 + sg1)
-
-sg2 = np.sum(sqr2 == 1)
-sp2 = np.sum(sqr2 == 0)
-porosity2 = sp2/(sp2 + sg2)
-
-sg3 = np.sum(sqr3 == 1)
-sp3 = np.sum(sqr3 == 0)
-porosity3 = sp3/(sp3 + sg3)
-
-sg4 = np.sum(sqr4 == 1)
-sp4 = np.sum(sqr4 == 0)
-porosity4 = sp4/(sp4 + sg4)
-
-
-
-# Plot
-fig, axs = plt.subplots(2, 2)
-axs[0, 0].imshow(sqr1, cmap=plt.cm.gray)
-axs[0, 0].axis('off')
-axs[0, 0].title.set_text(f'por = {round(porosity1, 2)},{sqr1.shape[0]}X{sqr1.shape[1]}')
-axs[0, 1].imshow(sqr2, cmap=plt.cm.gray)
-axs[0, 1].axis('off')
-axs[0, 1].title.set_text(f'por = {round(porosity2, 2)},{sqr2.shape[0]}X{sqr2.shape[1]}')
-axs[1, 0].imshow(sqr3, cmap=plt.cm.gray)
-axs[1, 0].axis('off')
-axs[1, 0].title.set_text(f'por = {round(porosity3, 2)}, {sqr3.shape[0]}X{sqr3.shape[1]}')
-axs[1, 1].imshow(sqr4, cmap=plt.cm.gray)
-axs[1, 1].axis('off')
-axs[1, 1].title.set_text(f'por = {round(porosity4, 2)},{sqr4.shape[0]}X{sqr4.shape[1]}')
-
-plt.subplot_tool()
-plt.show()
+def cirreg(
+        
+        lx, ly, radio1, inlet = 20, name1 = 'cirreg1.dat',
+        name2 = 'cirreg2.dat', name3 = 'cirreg3.dat',
+        name4 = 'cirreg4.dat' 
+           
+           ):
+    '''
+    Topologia de quatro distribuições regulares com mesma porosidade e raios diferentes
+    parameters:
+    lx: Resolução da caixa no eixo x    
+    ly: Resolução da caixa no eixo y    
+    returns:
+    porosity: porosidade da topologia
+    '''
+    shutil.rmtree('/home/wsantos/Documentos/cirreg')
+    path = os.path.join("/home/wsantos/Documentos", "cirreg" )
+    os.mkdir(path)
+    
+    
+    lx2 = int(lx/2)
+    lx3 = int(lx2/2)
+    lx4 = int(lx3/2)
+    listx = [lx, lx2, lx3, lx4]
+    
+    
+    ly2 = int(ly/2)
+    ly3 = int(ly2/2)
+    ly4 = int(ly3/2)
+    listy = [ly, ly2, ly3, ly4]
+    
+    
+    radio2 = int(radio1/2)
+    radio3 = int(radio2/2)
+    radio4 = int(radio3/2)
+    listradio = [radio1, radio2, radio3, radio4 ]
+    
+    
+    sqr1 = np.zeros((ly, lx), dtype=np.uint8)
+    sqr2 = np.zeros((ly2, lx2), dtype=np.uint8)
+    sqr3 = np.zeros((ly3, lx3), dtype=np.uint8)
+    sqr4 = np.zeros((ly4, lx4), dtype=np.uint8)
+    listsqr = [sqr1, sqr2, sqr3, sqr4]
+    
+    circ1 = disk(radio1)
+    circ2 = disk(radio2)
+    circ3 = disk(radio3)
+    circ4 = disk(radio4)
+    listcirc = [circ1, circ2, circ3, circ4]
+    
+    n = [1, 2, 3, 4]
+
+    files = []
+    
+    pore = []
+    
+    inlet = 20
+    
+    for i, rad in enumerate(listradio):
+        x = int(listx[i]/2)
+        y = int(listy[i]/2)
+        
+        
+        listsqr[i][y-rad:y+rad, x-rad:x+rad] = listcirc[i][:-1,:-1]
+        
+        x = 0
+        y = 0
+        
+        listsqr[i][y:y+rad, x:x+rad] =  listcirc[i][rad:-1,rad:-1]
+        
+        
+        x = listx[i]
+        y = 0
+        
+        listsqr[i][:rad+1, x-rad+1:x]  = listcirc[i][rad:,1:rad]
+        
+        
+        x = 0
+        y = listy[i]
+        
+        listsqr[i][y-rad+1:y, :rad+1]  = listcirc[i][1:rad, rad:]
+        
+        x = listx[i]
+        y = listy[i]
+        
+        listsqr[i][y-rad+1:y,  x-rad+1:x]  = listcirc[i][1:rad, 1:rad]
+        
+        
+        listsqr[i] = np.concatenate([listsqr[i]]*n[i], axis = 0) 
+        listsqr[i] = np.concatenate([listsqr[i]]*n[i], axis = 1)
+        
+        sg = np.sum(listsqr[i] == 1)
+        sp = np.sum(listsqr[i] == 0)
+        porosity = sp/(sp + sg)
+        pore.append(porosity)
+        
+        p = []
+    
+        for u in range(len(listsqr[i])):
+            for v in range(len(listsqr[i][1])):
+                if sqr1[u, v] == 1:
+                    p.append([v, len(listsqr[i] )-u])
+    
+        p = np.array(p)
+        
+        file = path +'/cirreg' + str(i+1) + '.dat'
+        np.savetxt(file, p + inlet, fmt='%i')
+        files.append(file)
+    
+
+    fig, axs = plt.subplots(2, 2)
+    
+    return ( 
+
+        fig.suptitle(rf'All geometries are shaped with {sqr1.shape[0]}$\times${sqr1.shape[1]} ', fontsize=16),
+        axs[0, 0].imshow(listsqr[0], cmap='binary'),
+        axs[0, 0].axis('off'),
+        axs[0, 0].set_title(rf'por = {round(pore[0], 2)} \\ radio = {listradio[0]}', size =8, color = 'r'),
+        
+        axs[0, 1].imshow(listsqr[1], cmap='binary'),
+        axs[0, 1].axis('off'),
+        axs[0, 1].set_title(rf'por = {round(pore[1], 2)} \\ radio = {listradio[1]}', size =8, color = 'r'),
+        
+        axs[1, 0].imshow(listsqr[2], cmap='binary'),
+        axs[1, 0].axis('off'),
+        axs[1, 0].set_title(rf'por = {round(pore[2], 2)} \\ radio = {listradio[2]}', size =8, color = 'r'),
+        
+        axs[1, 1].imshow(listsqr[2], cmap='binary'),
+        axs[1, 1].axis('off'),
+        axs[1, 1].set_title(rf'por = {round(pore[3], 2)} \\ radio = {listradio[3]}', size =8, color = 'r'),
+        plt.savefig('cirreg.png', dpi=300),
+        #plt.subplot_tool(),
+        plt.show()
+
+        )
+
+cirreg(lx=400, ly=200, radio1= 40)
 #%%
 
 """
@@ -221,24 +167,8 @@ Created on Wed Nov 30 11:45:00 2022
 @author: wsantos
 """
 
-from skimage.morphology import (cube)
-from skimage.morphology import (octahedron)
-from skimage.morphology import (ball)
-from skimage.morphology import square
-import numpy as np
-from skimage.draw import disk
-import matplotlib.pyplot as plt
-import random
-import os
-import math
 
-
-###############################################################################
-########################## Círculos aleatórios ################################
-###############################################################################
-
-
-def cirrand(lx, ly, prs, r, txtname, figname, cutoff=8, dist=2, mradio=math.isqrt(lx)):
+def cirrand(lx, ly, prs, r, txtname, figname, cutoff=8, dist=2):
     '''
     Topologia de círculos de mesmo raio distribuídos aleatoriamente 
 
@@ -253,6 +183,7 @@ def cirrand(lx, ly, prs, r, txtname, figname, cutoff=8, dist=2, mradio=math.isqr
     returns:
     porosity: porosidade da topologia
     '''
+    mradio=math.isqrt(lx)
     sqr = np.zeros((ly, lx), dtype=np.uint8)
     # Porosidade
     sg = np.sum(sqr == 1)
@@ -288,15 +219,21 @@ def cirrand(lx, ly, prs, r, txtname, figname, cutoff=8, dist=2, mradio=math.isqr
     x_inlet = 20
     file = open(txtname, 'w')
 
-    return plt.imshow(sqr, cmap=plt.cm.gray), plt.axis('off'), plt.title(f'ly = {ly}, lx = {lx}, porosity = {round(porosity, 2)}'), plt.xlabel(f'Ly = {ly}'),plt.savefig(figname, dpi=300), np.savetxt(file, p + x_inlet, fmt='%i'), print(f'A porosidade é {porosity}.')
+    return (
+            
+            plt.imshow(sqr, cmap=plt.cm.gray),
+            plt.axis('off'),
+            plt.title(rf'por = {round(porosity, 2)} \\ radio = {radio} \\ size = {lx}$\times${ly}' , size =12, color = 'r'),
+            plt.xlabel(f'Ly = {ly}'),
+            plt.savefig(figname, dpi=300),
+            np.savetxt(file, p + x_inlet, fmt='%i'),
+            
+            )
 
 
-cirrand(lx=400, ly=200, prs=0.5, r = 20,txtname='cirrand.dat', figname='cirrand.png')
+cirrand(lx = 400, ly=200, prs=0.5, r = 20,txtname='cirrand.dat', figname='cirrand.png')
 # %%
 
-
-#!/usr/bin/env python3
-# -- coding: utf-8 --
 """
 Created on Wed Nov 30 11:45:00 2022
 
@@ -304,11 +241,7 @@ Created on Wed Nov 30 11:45:00 2022
 """
 
 
-###############################################################################
-########################## Círculos aleatórios ################################
-###############################################################################
-
-def cirrand(lx, ly, prs, txtname, figname, cutoff=8, dist=2, mradio=math.isqrt(ly)):
+def cirrand(ly, lx, prs, txtname, figname, cutoff=8, dist=2):
     '''
     Topologia de círculos de diferentea raios distribuídos aleatoriamente 
 
@@ -323,7 +256,8 @@ def cirrand(lx, ly, prs, txtname, figname, cutoff=8, dist=2, mradio=math.isqrt(l
     returns:
     porosity: porosidade da topologia
     '''
-    sqr = np.zeros((lx, ly), dtype=np.uint8)
+    mradio=math.isqrt(ly)
+    sqr = np.zeros((ly, lx), dtype=np.uint8)
     # Porosidade
     sg = np.sum(sqr == 1)
     sp = np.sum(sqr == 0)
@@ -335,12 +269,12 @@ def cirrand(lx, ly, prs, txtname, figname, cutoff=8, dist=2, mradio=math.isqrt(l
     delta_p = 100
     while delta_p >= 0.01:  # critério de convergência
         if sqr.all() != 1:
-            x, y = random.randint(0, lx), random.randint(0, ly)
-            if (0 < x < (lx)) and (0 < y < (ly)):
+            y, x= random.randint(0, ly), random.randint(0, lx)
+            if (0 < y < (ly)) and (0 < x < (lx)):
                 radio = random.randint(4, cutoff)
                 check_radios, check_center = disk(
-                    (x, y), radio + 2, shape=(lx, ly))  # raio de corte
-                radios, center = disk((x, y), radio, shape=(lx, ly))
+                    (y, x), radio + 2, shape=(ly, lx))  # raio de corte
+                radios, center = disk((y, x), radio, shape=(ly, lx))
                 if np.sum(sqr[check_radios, check_center]) == 0:
                     sqr[radios, center] = 1
                     sg = np.sum(sqr == 1)
@@ -358,129 +292,366 @@ def cirrand(lx, ly, prs, txtname, figname, cutoff=8, dist=2, mradio=math.isqrt(l
     x_inlet = 20
     file = open(txtname, 'w')
 
-    return plt.imshow(sqr, cmap=plt.cm.gray), plt.axis('off'), plt.title(f'ly = {lx}, lx = {ly}, porosity = {round(porosity, 2)}'), plt.savefig(figname, dpi=300), np.savetxt(file, p + x_inlet, fmt='%i'), print(f'A porosidade é {porosity}.')
+    return(
+        plt.imshow(sqr, cmap=plt.cm.gray), plt.axis('off'),
+        plt.title(rf'por = {round(porosity, 2)} \\ radio = {radio} \\ size = {lx}$\times${ly}' , size =12, color = 'r'),
+        plt.savefig(figname, dpi=300), np.savetxt(file, p + x_inlet, fmt='%i'),
+        print(f'A porosidade é {porosity}.')
+)
 
-
-cirrand(lx=200, ly=500, prs=0.61, txtname='data', figname='figure.png')
+cirrand(lx=400, ly=200, prs=0.61, txtname='data', figname='figure.png')
 
 
 #%%
 
+def sphreg(lx, ly, lz, radio1):
+    
+    
+    
+    
+    
+    shutil.rmtree('/home/wsantos/Documentos/sphreg')
+    path = os.path.join("/home/wsantos/Documentos", "sphreg" )
+    os.mkdir(path)
+    
+    
+    lx2 = int(lx/2)
+    lx3 = int(lx2/2)
+    lx4 = int(lx3/2)
+    listx = [lx, lx2, lx3, lx4]
+    
+    
+    ly2 = int(ly/2)
+    ly3 = int(ly2/2)
+    ly4 = int(ly3/2)
+    listy = [ly, ly2, ly3, ly4]
+    
+    
+    lz2 = int(lz/2)
+    lz3 = int(lz2/2)
+    lz4 = int(lz3/2)
+    listz = [lz, lz2, lz3, lz4]
+    
+    radio2 = int(radio1/2)
+    radio3 = int(radio2/2)
+    radio4 = int(radio3/2)
+    listradio = [radio1, radio2, radio3, radio4 ]
+    
+    
+    sqr1 = np.zeros((lz, ly, lx), dtype=np.uint8)
+    sqr2 = np.zeros((lz2, ly2, lx2), dtype=np.uint8)
+    sqr3 = np.zeros((lz3, ly3, lx3), dtype=np.uint8)
+    sqr4 = np.zeros((lz4, ly4, lx4), dtype=np.uint8)
+    listsqr = [sqr1, sqr2, sqr3, sqr4]
+    
+    sph1 = ball(radio1)
+    sph2 = ball(radio2)
+    sph3 = ball(radio3)
+    sph4 = ball(radio4)
+    listsph = [sph1, sph2, sph3, sph4]
+    
+    n = [1, 2, 3, 4]
+    
+    files = []
+    
+    pore = []
+    
 
-def sphreg(r, sep, txtname='sphreg.dat', figname="sphreg.png"):
+    
+    
+    for i, rad in enumerate(listradio):
+        x = int(listx[i]/2)
+        y = int(listy[i]/2)
+        z = int(listz[i]/2)
+        
+        listsqr[i][z-rad:z+rad, y-rad:y+rad, x-rad:x+rad] = listsph[i][:-1,:-1,:-1]
+        
+         
+        x = 0
+        y = 0
+        z = 0
+        
+        listsqr[i][z: z+rad, y:y+rad, x:x+rad] =  listsph[i][rad:-1,rad:-1,rad:-1]
+        
+        
+        x = listx[i]
+        y = 0
+        z = listz[i]
+        listsqr[i][z-rad+1:z,:rad+1, x-rad+1:x] = listsph[i][1:rad,rad:,1:rad]
+        
+        
+        x = listx[i]
+        y = 0
+        z = 0
+        listsqr[i][:rad+1,:rad+1, x-rad+1:x] = listsph[i][rad:,rad:,1:rad]
+        
+        
+        x = listx[i]
+        y = listy[i]
+        z = 0
+        listsqr[i][:rad+1,y-rad+1:y, x-rad+1:x] = listsph[i][rad:,1:rad,1:rad]
+        
+        
+        x = 0
+        y = 0
+        z = listz[i]
+        
+        listsqr[i][z-rad:z+1,:rad+1, :rad+1] = listsph[i][:rad,rad:,rad:]
+        
+        
+        x = 0
+        y = 0
+        z = listz[i]
+        
+        listsqr[i][z-rad:z+1,:rad+1, :rad+1] = listsph[i][:rad,rad:,rad:]
+        
+        
+        x = 0
+        y = listy[i]
+        z = 0
+        
+        listsqr[i][:rad+1,y-rad:y+1, :rad+1] = listsph[i][rad:,:rad, rad:]
+        
+        x = listx[i]
+        y = listy[i]
+        z = listz[i]
+        
+        listsqr[i][z-rad:z+1,y-rad:y+1,x-rad:x+1] = listsph[i][:rad,:rad, :rad]
+        
+        
+        x = 0
+        y = listy[i]
+        z = listz[i]
+        
+        listsqr[i][z-rad:z+1,y-rad:y+1,:rad+1] = listsph[i][:rad,:rad, rad:]
+        
+        
+        listsqr[i] = np.concatenate([listsqr[i]]*n[i], axis = 0)
+        listsqr[i] = np.concatenate([listsqr[i]]*n[i], axis = 1)
+        listsqr[i] = np.concatenate([listsqr[i]]*n[i], axis = 2)
+    
+        sg = np.sum(listsqr[i] == 1)
+        sp = np.sum(listsqr[i] == 0)
+        porosity = sp/(sp + sg)
+        pore.append(porosity)
+    
+        p = []
+        for u in range(len(listsqr[i])):
+            for v in range(len(listsqr[i])):
+                for w in range(len(listsqr[i])):
+                    if listsqr[i][w, v, u] == 1:
+                        p.append([w, v, u])
+        
+        file = path +'/sphreg' + str(i+1) + '.dat'
+        np.savetxt(file, p, fmt='%i')
+        files.append(file)
 
-    shape1 = (sep, 2*r + 1, 2*r + 1)
-    img1 = np.zeros(shape1, dtype=np.uint8)
-    sphere1 = ball(r)
-    u = np.concatenate([sphere1, img1, sphere1, img1, sphere1, img1], axis=0)
+    
+    
+    fig, ax = plt.subplots(2, 2, figsize=(5, 5),
+                            subplot_kw=dict(projection="3d",
+                                            proj_type='ortho'))
+    return(
+    fig.suptitle(rf'All geometries are shaped with {sqr1.shape[0]}$\times${sqr1.shape[1]} ', fontsize=16),
+    ax[0,0].voxels(listsqr[0], facecolors=[0, 0, 0, 0], edgecolors='k'),
+    ax[0,0].set_title(rf'por = {round(pore[0], 2)} \\ radio = {listradio[0]}', size =8, color = 'r'),
+    
+    
+    ax[0,1].voxels(listsqr[1], facecolors=[0, 0, 0, 0], edgecolors='k'),
+    ax[0,1].set_title(rf'por = {round(pore[1], 2)} \\ radio = {listradio[1]}', size =8, color = 'r'),
+    
+    
+    ax[1,0].voxels(listsqr[2], facecolors=[0, 0, 0, 0], edgecolors='k'),
+    ax[1,0].set_title(rf'por = {round(pore[2], 2)} \\ radio = {listradio[2]}', size =8, color = 'r'),
+    
+    
+    ax[1,1].voxels(listsqr[3], facecolors=[0, 0, 0, 0], edgecolors='k'),
+    ax[1,1].set_title(rf'por = {round(pore[3], 2)} \\ radio = {listradio[3]}', size =8, color = 'r'),
+    
+    plt.savefig('sphreg.png', bpm=300),
+    
+    
+    plt.show()
 
-    shape2 = (len(u), sep, 2*r + 1)
-    img2 = np.zeros(shape2, dtype=np.uint8)
-    w = np.concatenate([u, img2, u, img2, u, img2], axis=1)
+)
 
-    shape3 = (len(u), len(u), sep)
-    img3 = np.zeros(shape3, dtype=np.uint8)
-    z = np.concatenate([w, img3, w, img3, w, img3], axis=2)
-
-    fig = plt.figure()
-    ax = plt.figure().add_subplot(projection='3d')
-
-    p = []
-    for k in range(len(z)):
-        for j in range(len(z)):
-            for i in range(len(z)):
-                if z[i, j, k] == 0:
-                    p.append([i, j, k])
-
-    p = np.array(p)
-
-    soma_rock = np.sum(p == 1)
-    soma_vac = np.sum(p == 0)
-    porosity = soma_vac/(soma_vac + soma_rock)
-
-    return ax.voxels(z), ax.set(xlabel='r', ylabel='g', zlabel='b'), ax.set_aspect('auto'), plt.show(), np.savetxt(txtname, p, fmt='%i'), plt.savefig(figname, bpm=300), porosity
-
-
-sphreg(r=12, sep=8)
+sphreg(lx = 90, ly = 90, lz = 90, radio1 = 30)
 # %%
 
 
-def octreg(r, sep, txtname='octreg.dat', figname="octreg.png"):
+def cubreg(lx, ly, lz, radio1):
+    
+    
+    
+    
+    
+    shutil.rmtree('/home/wsantos/Documentos/cubreg')
+    path = os.path.join("/home/wsantos/Documentos", "cubreg" )
+    os.mkdir(path)
+     
+    
+    
+    lx2 = int(lx/2)
+    lx3 = int(lx2/2)
+    lx4 = int(lx3/2)
+    listx = [lx, lx2, lx3, lx4]
+    
+    
+    ly2 = int(ly/2)
+    ly3 = int(ly2/2)
+    ly4 = int(ly3/2)
+    listy = [ly, ly2, ly3, ly4]
+    
+    
+    lz2 = int(lz/2)
+    lz3 = int(lz2/2)
+    lz4 = int(lz3/2)
+    listz = [lz, lz2, lz3, lz4]
+    
+    radio2 = int(radio1/2)
+    radio3 = int(radio2/2)
+    radio4 = int(radio3/2)
+    listradio = [radio1, radio2, radio3, radio4 ]
+    
+    
+    sqr1 = np.zeros((lz, ly, lx), dtype=np.uint8)
+    sqr2 = np.zeros((lz2, ly2, lx2), dtype=np.uint8)
+    sqr3 = np.zeros((lz3, ly3, lx3), dtype=np.uint8)
+    sqr4 = np.zeros((lz4, ly4, lx4), dtype=np.uint8)
+    listsqr = [sqr1, sqr2, sqr3, sqr4]
+    
+    sph1 = cube(int(radio1*2) + 1)
+    sph2 = cube(int(radio2*2)+ 1)
+    sph3 = cube(int(radio3*2)+ 1)
+    sph4 = cube(int(radio4*2)+ 1)
+    listsph = [sph1, sph2, sph3, sph4]
+    
+    n = [1, 2, 3, 4]
+    
+    files = []
+    
+    pore = []
+    
 
-    shape1 = (sep, 2*r + 1, 2*r + 1)
-    img1 = np.zeros(shape1, dtype=np.uint8)
-    octa1 = octahedron(r)
-    u = np.concatenate([octa1, img1, octa1, img1, octa1, img1], axis=0)
+    
+    
+    for i, rad in enumerate(listradio):
+        x = int(listx[i]/2)
+        y = int(listy[i]/2)
+        z = int(listz[i]/2)
+        
+        listsqr[i][z-rad:z+rad, y-rad:y+rad, x-rad:x+rad] = listsph[i][:-1,:-1,:-1]
+        
+         
+        x = 0
+        y = 0
+        z = 0
+        
+        listsqr[i][z: z+rad, y:y+rad, x:x+rad] =  listsph[i][rad:-1,rad:-1,rad:-1]
+        
+        
+        x = listx[i]
+        y = 0
+        z = listz[i]
+        listsqr[i][z-rad+1:z,:rad+1, x-rad+1:x] = listsph[i][1:rad,rad:,1:rad]
+        
+        
+        x = listx[i]
+        y = 0
+        z = 0
+        listsqr[i][:rad+1,:rad+1, x-rad+1:x] = listsph[i][rad:,rad:,1:rad]
+        
+        
+        x = listx[i]
+        y = listy[i]
+        z = 0
+        listsqr[i][:rad+1,y-rad+1:y, x-rad+1:x] = listsph[i][rad:,1:rad,1:rad]
+        
+        
+        x = 0
+        y = 0
+        z = listz[i]
+        
+        listsqr[i][z-rad:z+1,:rad+1, :rad+1] = listsph[i][:rad,rad:,rad:]
+        
+        
+        x = 0
+        y = 0
+        z = listz[i]
+        
+        listsqr[i][z-rad:z+1,:rad+1, :rad+1] = listsph[i][:rad,rad:,rad:]
+        
+        
+        x = 0
+        y = listy[i]
+        z = 0
+        
+        listsqr[i][:rad+1,y-rad:y+1, :rad+1] = listsph[i][rad:,:rad, rad:]
+        
+        x = listx[i]
+        y = listy[i]
+        z = listz[i]
+        
+        listsqr[i][z-rad:z+1,y-rad:y+1,x-rad:x+1] = listsph[i][:rad,:rad, :rad]
+        
+        
+        x = 0
+        y = listy[i]
+        z = listz[i]
+        
+        listsqr[i][z-rad:z+1,y-rad:y+1,:rad+1] = listsph[i][:rad,:rad, rad:]
+        
+        
+        listsqr[i] = np.concatenate([listsqr[i]]*n[i], axis = 0)
+        listsqr[i] = np.concatenate([listsqr[i]]*n[i], axis = 1)
+        listsqr[i] = np.concatenate([listsqr[i]]*n[i], axis = 2)
+    
+        sg = np.sum(listsqr[i] == 1)
+        sp = np.sum(listsqr[i] == 0)
+        porosity = sp/(sp + sg)
+        pore.append(porosity)
+    
+        p = []
+        for u in range(len(listsqr[i])):
+            for v in range(len(listsqr[i])):
+                for w in range(len(listsqr[i])):
+                    if listsqr[i][w, v, u] == 1:
+                        p.append([w, v, u])
+        
+        file = path +'/cubreg' + str(i+1) + '.dat'
+        np.savetxt(file, p, fmt='%i')
+        files.append(file)
 
-    shape2 = (len(u), sep, 2*r + 1)
-    img2 = np.zeros(shape2, dtype=np.uint8)
-    w = np.concatenate([u, img2, u, img2, u, img2], axis=1)
+    
+    
+    fig, ax = plt.subplots(2, 2, figsize=(5, 5),
+                            subplot_kw=dict(projection="3d",
+                                            proj_type='ortho'))
+    return(
+    fig.suptitle(rf'All geometries are shaped with {sqr1.shape[0]}$\times${sqr1.shape[1]} ', fontsize=16),
+    ax[0,0].voxels(listsqr[0], facecolors=[0, 0, 0, 0], edgecolors='k'),
+    ax[0,0].set_title(rf'por = {round(pore[0], 2)} \\ radio = {listradio[0]}', size =8, color = 'r'),
+    
+    
+    ax[0,1].voxels(listsqr[1], facecolors=[0, 0, 0, 0], edgecolors='k'),
+    ax[0,1].set_title(rf'por = {round(pore[1], 2)} \\ radio = {listradio[1]}', size =8, color = 'r'),
+    
+    
+    ax[1,0].voxels(listsqr[2], facecolors=[0, 0, 0, 0], edgecolors='k'),
+    ax[1,0].set_title(rf'por = {round(pore[2], 2)} \\ radio = {listradio[2]}', size =8, color = 'r'),
+    
+    
+    ax[1,1].voxels(listsqr[3], facecolors=[0, 0, 0, 0], edgecolors='k'),
+    ax[1,1].set_title(rf'por = {round(pore[3], 2)} \\ radio = {listradio[3]}', size =8, color = 'r'),
+    
+    plt.savefig('sphreg.png', bpm=300),
+    
+    
+    plt.show()
 
-    shape3 = (len(u), len(u), sep)
-    img3 = np.zeros(shape3, dtype=np.uint8)
-    z = np.concatenate([w, img3, w, img3, w, img3], axis=2)
+)
 
-    fig = plt.figure()
-    ax = plt.figure().add_subplot(projection='3d')
-
-    p = []
-    for k in range(len(z)):
-        for j in range(len(z)):
-            for i in range(len(z)):
-                if z[i, j, k] == 1:
-                    p.append([i, j, k])
-
-    p = np.array(p)
-
-    soma_rock = np.sum(p == 1)
-    soma_vac = np.sum(p == 0)
-    porosity = soma_vac/(soma_vac + soma_rock)
-
-    return ax.voxels(z), ax.set(xlabel='r', ylabel='g', zlabel='b'), ax.set_aspect('auto'), plt.show(), np.savetxt(txtname, p, fmt='%i'), plt.savefig(figname, bpm=200), porosity
-
-
-octreg(r=12, sep=8)
-# %%
-
-
-def cubreg(r, sep, txtname='cubreg.dat', figname="cubreg.png"):
-
-    shape1 = (sep, r, r)
-    img1 = np.zeros(shape1, dtype=np.uint8)
-    cube1 = cube(r)
-    u = np.concatenate([cube1, img1, cube1, img1, cube1, img1], axis=0)
-
-    shape2 = (len(u), sep, r)
-    img2 = np.zeros(shape2, dtype=np.uint8)
-    w = np.concatenate([u, img2, u, img2, u, img2], axis=1)
-
-    shape3 = (len(u), len(u), sep)
-    img3 = np.zeros(shape3, dtype=np.uint8)
-    z = np.concatenate([w, img3, w, img3, w, img3], axis=2)
-
-    fig = plt.figure()
-    ax = plt.figure().add_subplot(projection='3d')
-
-    p = []
-    for k in range(len(z)):
-        for j in range(len(z)):
-            for i in range(len(z)):
-                if z[i, j, k] == 1:
-                    p.append([i, j, k])
-
-    p = np.array(p)
-
-    soma_rock = np.sum(p == 1)
-    soma_vac = np.sum(p == 0)
-    porosity = soma_vac/(soma_vac + soma_rock)
-
-    return ax.voxels(z), ax.set(xlabel='r', ylabel='g', zlabel='b'), ax.set_aspect('auto'), plt.show(), np.savetxt(txtname, p, fmt='%i'), plt.savefig(figname, bpm=200), porosity
-
-
-cubreg(r=12, sep=8)
-
-
-
+cubreg(lx = 90, ly = 90, lz = 90, radio1 = 30)
 # %%
 
 ########################ESFERAS ALEATÓRIOS####################################
@@ -555,10 +726,7 @@ def sphran(la, lb, lc, prs, cutoff = 6, txtname='sphran.dat', figname='sphran.pn
 
 sphran(la = 100, lb = 100, lc = 100, prs = 0.96)
 # %%
-import numpy as np
-import matplotlib.pyplot as plt
-import random
-from skimage.morphology import cube
+
     
 ###############################CUBOS ALEATÓRIOS################################
 
@@ -766,63 +934,4 @@ np.savetxt(file, p + x_inlet, fmt='%i')
 print(f'A porosidade é {porosity}.')
 
 
-#%%
-
-import numpy as np
-import matplotlib.pyplot as plt
-from skimage.morphology import disk
-from scipy import ndimage
-
-
-lx=100
-ly=100
-
-
-sqr = np.zeros((ly, lx), dtype=np.uint8)
-# it works just for 6, 11,13, 16, 22, 31, 32, 33, 58, 59, 60, 61, 62, 63, 64, 65, 66
-radio = 24
-circ = disk(radio)
-#############################BLOCO DE MATRIZES##############################
-
-x = int(lx/2)
-y = int(ly/2)
-
-sqr[y-radio:y+radio, x-radio:x+radio] = circ[:-1,:-1]
-
-
-x = 0
-y = 0
-
-sqr[y:y+radio, x:x+radio] = circ[radio:-1,radio:-1]
-
-x = lx-radio
-y = ly-radio
-
-sqr[y:y+radio, x:x+radio] = circ[:radio,:radio]
-
-
-x = lx
-y = 0
-
-sqr[:radio+1, x-radio+1:x] = circ[radio:,1:radio]
-
-x = 0
-y = ly
-
-sqr[ly-radio:ly, :radio] = circ[:radio, radio+1:]
-#############################BLOCO DE CONC#####################################
-n = int(radio/5)
-sqr = np.concatenate([sqr]*n, axis = 0) 
-sqr = np.concatenate([sqr]*n, axis = 1)
-
-
-############################POROSIDADE E PLOT##################################
-sg = np.sum(sqr == 1)
-sp = np.sum(sqr == 0)
-porosity = sp/(sp + sg)
-# Plot
-plt.imshow(sqr, cmap=plt.cm.gray)
-plt.axis('off')
-plt.title(f'radio = {radio}, esferas = {n*n}, {sqr.shape[1]} X {sqr.shape[1]}, porosity = {round(porosity, 2)}')  
-print(f'O raio é {radio}.')
 
