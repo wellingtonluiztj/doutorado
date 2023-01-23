@@ -37,10 +37,13 @@ def cirreg(
     returns:
     porosity: porosidade da topologia
     '''
-    shutil.rmtree('/home/wsantos/Documentos/cirreg')
     path = os.path.join("/home/wsantos/Documentos", "cirreg" )
-    os.mkdir(path)
-    
+    Exist = os.path.exists(path)
+    if Exist == False:
+        os.mkdir(path)
+    else:
+        shutil.rmtree('/home/wsantos/Documentos/cirreg')
+        os.mkdir(path)
     
     lx2 = int(lx/2)
     lx3 = int(lx2/2)
