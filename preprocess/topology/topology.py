@@ -795,143 +795,59 @@ def cubran(la, lb, lc, prs, cutoff = 4, txtname='sqrreg.dat', figname='cubran.pn
 cubran(la = 140, lb = 100, lc = 200, prs = 0.84)
 
 # %%
-
-#!/usr/bin/env python3
-# -- coding: utf-8 --
-"""
-Created on Wed Nov 30 11:45:00 2022
-
-@author: wsantos
-"""
-
-
-
-###############################################################################
-################################# Teste #######################################
-###############################################################################
-lx=200 
-ly=400 
-prs=0.64 
-
-cutoff=8
-sqr = np.zeros((lx, ly), dtype=np.uint8)
-
-# Porosidade
-sg = np.sum(sqr == 1)
-sp = np.sum(sqr == 0)
-porosity = sp/(sp + sg)
-min_dist = 8  # distância minima entre duas esferas
-r = 10
-# int(input("Esfera de raio máximo"))
-# Discos
-px = list(range(r,lx,3*r))
-py = list(range(r,ly,3*r))
-
-for i in px:
-    for j in py:
-        x, y = i, j
-        radio = r
-        radios, center = disk((x, y), radio, shape=(lx, ly))
-        sqr[radios, center] = 1
-        sg = np.sum(sqr == 1)
-        sp = np.sum(sqr == 0)
-        porosity = sp/(sp + sg)
-        delta_p = abs(porosity - prs)
-
-            
-print(f'y = {x},x = {y}.')
-
-
-p = []
-
-for i in range(len(sqr)):
-    for j in range(len(sqr[0])):
-        if sqr[i, j] == 1:
-            p.append([j, len(sqr)-i])
-
-
-
-p = np.array(p)
-x_inlet = 20
-txtname='teste.dat'
-file = open(txtname, 'w')
-figname='figure.png'
-
-plt.imshow(sqr, cmap=plt.cm.gray)
-plt.axis('off')
-plt.title(f'ly = {lx}, lx = {ly}, porosity = {round(porosity, 2)}') 
-plt.savefig(figname, dpi=300) 
-np.savetxt(file, p + x_inlet, fmt='%i')
-print(f'A porosidade é {porosity}.')
- 
-
-#%%
-###############################################################################
-################################# Teste #######################################
-###############################################################################
+from matplotlib import pyplot as plt
 import numpy as np
-import matplotlib.pyplot as plt
-from skimage.morphology import disk
+import math
 
 
-interval = 3
-lx=200 
-ly=400
-# it works just for 6, 11,13, 16, 22, 31, 32, 33, 58, 59, 60, 61, 62, 63, 64, 65, 66
-radio = 13
-cutoff = radio*interval
+sand = np.fromfile('berea-sandstone.raw')
+sand[np.isnan(sand)] = 0
+sqr = np.zeros(shape=(100, 100, 100), dtype=np.uint8)
+# sqr = sqr + abs(min(sqr))   
+
+# 
+
+# sqr = [ int(x) for x in sqr ]
+
+# sqr = np.array(sqr)
 
 
-sqr = np.zeros((lx, ly), dtype=np.uint8)
-circ = disk(radio)
+amin, amax = min(sand), max(sand)
+for i, val in enumerate(sand):
+    sand[i] = 500*(val-amin) / (amax-amin)
+    if sand[i] > 1:
+        sand[i] = 0
+    else:
+        sand[i] = 1
 
 
-px = list(range(radio, lx + 4*radio , cutoff ))
-py = list(range(radio, ly + 4*radio, cutoff ))
+sand = sand.reshape(125,1000,1000)
 
 
-for i in px:
-    for j in py:
-        x, y = i, j
-        if x <= (lx-radio) and y <= (ly-radio):
-            sqr[x-radio:x+radio, y-radio:y+radio] = circ[:-1,:-1]
-        elif y > (ly-radio)  and x < (lx - radio) <= lx:
-            sqr[(x-radio):x+radio, y-radio:ly] = circ[:-1,:(radio-(y-ly))]
-        elif x  > (lx-radio) and y < (ly - radio) <= ly:
-            sqr[x-radio:lx,y-radio:y+radio] = circ[:(radio-(x-lx)),:-1]  
-        elif x > (lx - radio) and y > (ly - radio):
-            sqr[x-radio:lx, y-radio:ly] = circ[:(radio-(x-lx)),:(radio-(y-ly))]
-        elif y > ly and x < lx:
-            sqr[(x-radio):x+radio, y-radio:ly] = circ[:-1,:(radio-(y-ly))]
-        elif x  > lx and y < ly:
-            sqr[x-radio:lx,y-radio:y+radio] = circ[:(radio-(x-lx)),:-1] 
 
-            
-sg = np.sum(sqr == 1)
-sp = np.sum(sqr == 0)
-porosity = sp/(sp + sg)
+rad = 100
+sqr[:rad, :rad, :rad] = sand[:rad,:rad:,:rad]
+
+#sqr = np.rint(sqr) 
+#sg = np.sum(sqr != 0)
+#print(sg)
+
+
 
 
 p = []
-
-for i in range(len(sqr)):
-    for j in range(len(sqr[0])):
-        if sqr[i, j] == 1:
-            p.append([j, len(sqr)-i])
-
-
+for k in range(len(sqr[2])):
+    for j in range(len(sqr[1])):
+        for i in range(len(sqr[0])):
+            if sqr[i,j,k] == 1:
+                p.append([i, j, k])
+       
 p = np.array(p)
-x_inlet = 20
-txtname='teste.dat'
-file = open(txtname, 'w')
-figname='figure.png'
+np.savetxt("sand.dat", p, fmt='%i')
 
-plt.imshow(sqr, cmap=plt.cm.gray)
-plt.axis('off')
-plt.title(f'ly = {lx}, lx = {ly}, porosity = {round(porosity, 2)}') 
-plt.savefig(figname, dpi=300) 
-np.savetxt(file, p + x_inlet, fmt='%i')
-print(f'A porosidade é {porosity}.')
-
-
+  
+fig = plt.figure()
+ax = plt.figure().add_subplot(projection='3d')
+ax.voxels(sqr, facecolors=[0, 0, 0, 0], edgecolors='k')
+plt.show()
 
