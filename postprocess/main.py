@@ -9,6 +9,6 @@ Created on Fri Jan 27 15:06:45 2023
 from angulocontato import Bubble
 
 
-b1 = Bubble(cross, plus)
+b1 = Bubble(1,1)
 
 b1.angcont(cross = 200, plus = 40)
