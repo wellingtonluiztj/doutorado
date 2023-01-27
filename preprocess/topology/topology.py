@@ -37,12 +37,12 @@ def cirreg(
     returns:
     porosity: porosidade da topologia
     '''
-    path = os.path.join("/home/wsantos/Documentos", "cirreg" )
+    path = os.path.join("/run/user/1000/gvfs/google-drive:host=usp.br,user=wellingtonluiztj/0AI0JgvjL-GeBUk9PVA/1hatrx9lJVMrioeXJaVoVvo4weklOOcff/1CyeyBzBVe9nUuuLYXEFa2NEkqXLDSicQ/1RPMzmf6jvnDWtKe_hz0JvbQgPLd-dCnu/1ZHnDJ5UpMcF43vZfFY5s_gZFAwQ2e4gY/12HFmdZu8v1rBmBOWC5U0Iwu21KgQOMcj/1DCQoiAhBzNvrResCIfDBEpk2-lUOQYnl/17TyIO9ASlBV_e05ZnBrPSFYk0jbwpeel/cirreg" )
     Exist = os.path.exists(path)
     if Exist == False:
         os.mkdir(path)
     else:
-        shutil.rmtree('/home/wsantos/Documentos/cirreg')
+        shutil.rmtree('/run/user/1000/gvfs/google-drive:host=usp.br,user=wellingtonluiztj/0AI0JgvjL-GeBUk9PVA/1hatrx9lJVMrioeXJaVoVvo4weklOOcff/1CyeyBzBVe9nUuuLYXEFa2NEkqXLDSicQ/1RPMzmf6jvnDWtKe_hz0JvbQgPLd-dCnu/1ZHnDJ5UpMcF43vZfFY5s_gZFAwQ2e4gY/12HFmdZu8v1rBmBOWC5U0Iwu21KgQOMcj/1DCQoiAhBzNvrResCIfDBEpk2-lUOQYnl/17TyIO9ASlBV_e05ZnBrPSFYk0jbwpeel/cirreg')
         os.mkdir(path)
     
     lx2 = int(lx/2)
@@ -161,7 +161,7 @@ def cirreg(
 
         )
 
-cirreg(lx=400, ly=200, radio1= 40)
+cirreg(lx=400, ly=200, radio1= 93)
 #%%
 
 """
