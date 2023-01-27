@@ -4,6 +4,7 @@ from matplotlib import colors
 import glob
 from matplotlib.colors import Normalize
 from scipy import ndimage
+from matplotlib import animation
 
 font = {'family': 'serif',
         'color':  'white',
@@ -77,4 +78,71 @@ class Bubble:
         plt.imshow(den1, interpolation='nearest', origin='lower',cmap=cmap, norm=norm),
         theta
         )
-    
+        
+    def anime(self, g, timestep = 100, dt = 0.000089):
+        datas = glob.glob("gnu_output/*")
+        datas.sort()
+       
+        plt.tight_layout()
+        
+        img = [] # some array of images
+        frames = [] # for storing the generated images
+        i = 0
+        
+        list_of_datas = []
+        for file in datas:
+            
+            data =  np.loadtxt(file,skiprows=1)
+        
+            x,y = data[:,0],data[:,1]
+        
+            den1, wall = data[:,3], data[:,7]
+
+        
+            den1 = den1.reshape((int(np.amax(x)),int(np.amax(y))))
+            
+            wall = wall.reshape((int(np.amax(x)),int(np.amax(y))))
+        
+        
+            for i in range(len(den1)):
+                for j in range(len(den1[1])):
+                    if den1[i,j]==0:
+                        den1[i,j]=4
+            den1 = np.transpose(den1)
+            wall = np.transpose(wall)
+            list_of_datas.append(wall + den1) # adiciona quem virará vídeo
+        
+            i+=1
+            
+        fig = plt.figure()
+        myimages = []
+        
+        for i in list_of_datas:
+            frame = i
+            cmap = colors.ListedColormap(['#A3B7EC', '#D0021B','#BE7D42','#FFE19C'])
+            bounds=[0.0,0.3, 0.5, 2.0, 4.0]
+            norm = colors.BoundaryNorm(bounds, cmap.N)
+            plt.title(rf'$g^R_o$ = {g}')
+            plt.text(10 , 10, rf'$tempo = {dt*timestep} s$', fontdict=font),
+            plt.axis('off')
+            imgplot = plt.imshow(frame, interpolation='nearest', origin='lower',cmap=cmap, norm=norm)
+            myimages.append([imgplot])
+        
+        #plt.colorbar()
+        
+        #interval -> tanto faz
+        my_anim = animation.ArtistAnimation(fig, myimages, interval=True, blit=False, repeat=True)
+        
+        savevideo = 'angulo' + str(g) + '.mp4'
+        f = savevideo
+        writervideo = animation.FFMpegWriter(fps=6)
+        cmap = colors.ListedColormap(['#A3B7EC', '#D0021B','#BE7D42','#FFE19C'])
+        bounds=[0.0,0.3, 0.5, 2.0, 4.0]
+        norm = colors.BoundaryNorm(bounds, cmap.N)
+        return (my_anim.save(f, writer=writervideo),
+                plt.imshow(list_of_datas[-1],interpolation='nearest', origin='lower',cmap=cmap, norm=norm),
+                plt.title(rf'$g^R_o$ = {g}'),
+                plt.axis('off'),
+                plt.savefig('angulo.png')
+                )
+
