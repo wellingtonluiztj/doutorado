@@ -1,2 +1,6 @@
-Apenas para poder fazer um push
+1. Calcular força para o ângulo de contato
+2. Fuxo de Piseuille com gráfico de parábola
+3. Cálculo de permeabilidade
+4. Cálculo do fator de recuperação com brack through
+
 
