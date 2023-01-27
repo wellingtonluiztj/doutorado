@@ -37,12 +37,12 @@ def cirreg(
     returns:
     porosity: porosidade da topologia
     '''
-    path = os.path.join("/run/user/1000/gvfs/google-drive:host=usp.br,user=wellingtonluiztj/0AI0JgvjL-GeBUk9PVA/1hatrx9lJVMrioeXJaVoVvo4weklOOcff/1CyeyBzBVe9nUuuLYXEFa2NEkqXLDSicQ/1RPMzmf6jvnDWtKe_hz0JvbQgPLd-dCnu/1ZHnDJ5UpMcF43vZfFY5s_gZFAwQ2e4gY/12HFmdZu8v1rBmBOWC5U0Iwu21KgQOMcj/1DCQoiAhBzNvrResCIfDBEpk2-lUOQYnl/17TyIO9ASlBV_e05ZnBrPSFYk0jbwpeel/cirreg" )
+    path = os.path.join("/home/wsantos/Documentos/dados/cirreg" )
     Exist = os.path.exists(path)
     if Exist == False:
         os.mkdir(path)
     else:
-        shutil.rmtree('/run/user/1000/gvfs/google-drive:host=usp.br,user=wellingtonluiztj/0AI0JgvjL-GeBUk9PVA/1hatrx9lJVMrioeXJaVoVvo4weklOOcff/1CyeyBzBVe9nUuuLYXEFa2NEkqXLDSicQ/1RPMzmf6jvnDWtKe_hz0JvbQgPLd-dCnu/1ZHnDJ5UpMcF43vZfFY5s_gZFAwQ2e4gY/12HFmdZu8v1rBmBOWC5U0Iwu21KgQOMcj/1DCQoiAhBzNvrResCIfDBEpk2-lUOQYnl/17TyIO9ASlBV_e05ZnBrPSFYk0jbwpeel/cirreg')
+        shutil.rmtree('/home/wsantos/Documentos/dados/cirreg')
         os.mkdir(path)
     
     lx2 = int(lx/2)
@@ -125,7 +125,7 @@ def cirreg(
     
         for u in range(len(listsqr[i])):
             for v in range(len(listsqr[i][1])):
-                if sqr1[u, v] == 1:
+                if listsqr[i][u, v] == 1:
                     p.append([v, len(listsqr[i] )-u])
     
         p = np.array(p)
@@ -152,7 +152,7 @@ def cirreg(
         axs[1, 0].axis('off'),
         axs[1, 0].set_title(rf'por = {round(pore[2], 2)} \\ radio = {listradio[2]}', size =8, color = 'r'),
         
-        axs[1, 1].imshow(listsqr[2], cmap='binary'),
+        axs[1, 1].imshow(listsqr[3], cmap='binary'),
         axs[1, 1].axis('off'),
         axs[1, 1].set_title(rf'por = {round(pore[3], 2)} \\ radio = {listradio[3]}', size =8, color = 'r'),
         plt.savefig('cirreg.png', dpi=300),
@@ -161,7 +161,7 @@ def cirreg(
 
         )
 
-cirreg(lx=400, ly=200, radio1= 93)
+cirreg(lx=375, ly=300, radio1= 100)
 #%%
 
 """
