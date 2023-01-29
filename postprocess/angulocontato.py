@@ -13,29 +13,41 @@ font = {'family': 'serif',
         }
 
 class Bubble:
-    def __init__(self, cross, plus, timestep = 100, dt = 0.000089):
-        self.cross = cross
-        self.plus = plus
-        self.timestep = timestep
-    def angcont(self, cross, plus, timestep = 100, dt = 0.000089):
-        '''
-        Medida o ângulo de contato da Gota de óleo circundada com água.
+    '''
+    Medida o ângulo de contato da Gota de óleo circundada com água.
+    parameters:
     cross: eixo da esquerda    
     plus: eixo da direita
+    pasta: nome da pasta de arquivos
     timestep: tempo de simulação [0,100]
+    '''
     
-    returns:
-    theta: ângulo de contato
+    
+    def __init__(self, timestep = 100, dt = 0.000089):
+        self.timestep = timestep
+        self.dt = dt
+    def angcont(self, cross, plus, pasta, timestep = 100, dt = 0.000089):
+        '''
+        Medida o ângulo de contato da Gota de óleo circundada com água.
+        parameters:
+        cross: eixo da esquerda    
+        plus: eixo da direita
+        pasta: nome da pasta de arquivos
+        timestep: tempo de simulação [0,100]
+    
+        returns:
+        theta: ângulo de contato
         '''
         
-        datas = glob.glob("gnu_output/*")
+
+        datas = glob.glob("/home/wsantos/Documentos/dados" + str(pasta) + "/*")
         datas.sort()
-        if timestep >= 0 and timestep < 10:
-            number = 'gnu_output/RES-00'+ str(timestep) + '.dat'
-        elif timestep >= 10 and timestep <= 99:
-            number = 'gnu_output/RES-0'+ str(timestep) + '.dat'
+        if self.timestep >= 0 and self.timestep < 10:
+            number = '/home/wsantos/Documentos/dados/teste1/RES-00'+ str(self.timestep) + '.dat'
+        elif self.timestep >= 10 and self.timestep <= 99:
+            number = '/home/wsantos/Documentos/dados/teste1/RES-0'+ str(self.timestep) + '.dat'
         else:
-            number = 'gnu_output/RES-'+ str(timestep) + '.dat'
+            number = '/home/wsantos/Documentos/dados/teste1/RES-'+ str(self.timestep) + '.dat'
         data =  np.loadtxt(number,skiprows=1) 
         x,y = data[:,0],data[:,1]
         
@@ -73,14 +85,15 @@ class Bubble:
         plt.vlines(x=cross, ymin=0.0, ymax=np.shape(den1)[0], color='r'),
         plt.text(cross + plus/2, w/2 + 4, r'$h$', fontdict=font),
         plt.text(cross -10 , w - 10, r'$w$', fontdict=font),
-        plt.text(10 , 10, rf'$tempo = {dt*timestep} s$', fontdict=font),
+        plt.text(10 , 10, rf'$tempo = {self.dt*self.timestep} s$', fontdict=font),
         plt.vlines(x=cross+plus, ymin=0.0, ymax=np.shape(den1)[0], color='r'),
         plt.imshow(den1, interpolation='nearest', origin='lower',cmap=cmap, norm=norm),
         theta
         )
         
-    def anime(self, g, timestep = 100, dt = 0.000089):
-        datas = glob.glob("gnu_output/*")
+    def anganim(self, g, pasta, timestep = 100, dt = 0.000089):
+        
+        datas = glob.glob("/home/wsantos/Documentos/dados" + str(pasta) + "/*")
         datas.sort()
        
         plt.tight_layout()
@@ -145,4 +158,3 @@ class Bubble:
                 plt.axis('off'),
                 plt.savefig('angulo.png')
                 )
-

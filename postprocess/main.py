@@ -1,8 +1,8 @@
 from angulocontato import Bubble
 
 
-b1 = Bubble(1,1)
+b1 = Bubble()
 
-#b1.angcont(cross = 210, plus = 41)
+b1.angcont(cross = 209, plus = 43, pasta = 'teste1')
 
-b1.anime(g=200)
+#b1.anganim(g=200)
