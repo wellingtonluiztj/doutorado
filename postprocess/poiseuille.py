@@ -6,10 +6,10 @@ from matplotlib import animation
 from matplotlib import colors
 
 
-font = {'family': 'serif',
-        'color':  'white',
+font1 = {'family': 'serif',
+        'color':  'black',
         'weight': 'bold',
-        'size': 7,
+        'size': 12
         }
 
 
@@ -20,11 +20,11 @@ dm = 2133-11
 dt = 308e-9 
 dv = dx/dt
 
-time = 5
+time = 100
 
 if time >= 0 and time < 10:
     datas = glob.glob("/home/wsantos/Documentos/dados/gnu_output/RES-00" + str(time) +".dat")
-elif time >= 10 and time < 99:
+elif time >= 10 and time <= 99:
     datas = glob.glob("/home/wsantos/Documentos/dados/gnu_output/RES-0" + str(time) + ".dat")
 else:
     datas = glob.glob("/home/wsantos/Documentos/dados/gnu_output/RES-" + str(time) + ".dat")
@@ -50,7 +50,9 @@ myimages = []
 
 
 
-plt.plot(X, velavg, 'o', alpha=0.4)
-plt.xlabel(fr'Posição $x(m/s)$')
-plt.ylabel(fr'Velocity $v(m/s)$')
+plt.plot(X, velavg*dv, 'o', alpha=0.4)
+plt.xlabel(fr'Posição $x(m/s)$', fontdict = font1)
+plt.ylabel(fr'Velocity $v(m/s)$', fontdict = font1)
+figura = '/home/wsantos/Documentos/dados/poiseuille.png'
+plt.savefig(figura, dpi = 300)
 plt.show()

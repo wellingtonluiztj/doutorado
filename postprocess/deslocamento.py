@@ -5,56 +5,56 @@ from matplotlib import colors
 from matplotlib import animation
 import pandas as pd
 
-# datas = glob.glob("/home/wsantos/Documentos/dados/gnu_output/*")
-# datas.sort()
-# data =  np.loadtxt("/home/wsantos/Documentos/dados/gnu_output/RES-003.dat",skiprows=1) 
+datas = glob.glob("/home/wsantos/Documentos/dados/gnu_output/*")
+datas.sort()
+data =  np.loadtxt("/home/wsantos/Documentos/dados/gnu_output/RES-003.dat",skiprows=1) 
 
 
-# plt.tight_layout()
-# img = [] 
-# frames = [] 
-# i = 0
+plt.tight_layout()
+img = [] 
+frames = [] 
+i = 0
 
-# list_of_datas = []
+list_of_datas = []
 
 
-# for file in datas:
-#     data =  np.loadtxt(file,skiprows=1)
-#     x,y = data[:,0],data[:,1] 
-#     den, wall = data[:,3], data[:,7]
-#     den = den.reshape((int(np.amax(x)),int(np.amax(y)))) # reshape da densidade para array
-#     wall = wall.reshape((int(np.amax(x)),int(np.amax(y))))# 
-#     den = np.transpose(den)
-#     wall = np.transpose(wall)
+for file in datas:
+    data =  np.loadtxt(file,skiprows=1)
+    x,y = data[:,0],data[:,1] 
+    den, wall = data[:,3], data[:,7]
+    den = den.reshape((int(np.amax(x)),int(np.amax(y)))) # reshape da densidade para array
+    wall = wall.reshape((int(np.amax(x)),int(np.amax(y))))# 
+    den = np.transpose(den)
+    wall = np.transpose(wall)
 
-#     for i in range(len(den)):
-#         for j in range(len(den[1])):
-#             if den[i,j]==0:
-#                 den[i,j]=4
+    for i in range(len(den)):
+        for j in range(len(den[1])):
+            if den[i,j]==0:
+                den[i,j]=4
 
     
-#     list_of_datas.append(wall+den)
+    list_of_datas.append(wall+den)
 
-#     i+=1
+    i+=1
     
-# fig = plt.figure()
-# myimages = []
+fig = plt.figure()
+myimages = []
 
-# for i in list_of_datas:
-#     frame = i
-#     cmap = colors.ListedColormap(['#A3B7EC', '#D0021B','#BE7D42','#FFE19C'])
-#     bounds=[0.0,0.3, 0.35, 2.0, 4.0]
-#     norm = colors.BoundaryNorm(bounds, cmap.N)
-#     plt.title("Densidade 2")
-#     plt.axis('off')
-#     imgplot = plt.imshow(frame, interpolation='nearest', origin='lower',cmap=cmap, norm=norm)
-#     myimages.append([imgplot])
+for i in list_of_datas:
+    frame = i
+    cmap = colors.ListedColormap(['#A3B7EC', '#D0021B','#BE7D42','#FFE19C'])
+    bounds=[0.0,0.3, 0.35, 2.0, 4.0]
+    norm = colors.BoundaryNorm(bounds, cmap.N)
+    plt.title("Densidade 2")
+    plt.axis('off')
+    imgplot = plt.imshow(frame, interpolation='nearest', origin='lower',cmap=cmap, norm=norm)
+    myimages.append([imgplot])
 
-# my_anim = animation.ArtistAnimation(fig, myimages, interval=True, blit=False, repeat=True)
+my_anim = animation.ArtistAnimation(fig, myimages, interval=True, blit=False, repeat=True)
 
-# f = '/home/wsantos/Documentos/dados/deslocamento.mp4'
-# writervideo = animation.FFMpegWriter(fps=6)
-# my_anim.save(f, writer=writervideo)
+f = '/home/wsantos/Documentos/dados/deslocamento.mp4'
+writervideo = animation.FFMpegWriter(fps=6)
+my_anim.save(f, writer=writervideo)
 
 
 

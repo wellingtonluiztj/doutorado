@@ -4,6 +4,9 @@ from matplotlib import colors
 import glob
 from matplotlib import animation
 
+
+
+
 font = {'family': 'serif',
         'color':  'white',
         'weight': 'normal',
@@ -19,12 +22,12 @@ class Bubble:
     pasta: nome da pasta de arquivos
     timestep: tempo de simulação [0,100]
     '''
+
     
-    
-    def __init__(self, timestep = 100, dt = 0.000089):
+    def __init__(self, timestep = 100, dt = 11e-6):
         self.timestep = timestep
         self.dt = dt
-    def angcont(self, cross, plus, pasta, timestep = 100, dt = 0.000089):
+    def angcont(self, plus, pasta, timestep = 100, dt = 11e-6):
         '''
         Medida o ângulo de contato da Gota de óleo circundada com água.
         parameters:
@@ -38,14 +41,14 @@ class Bubble:
         '''
         
 
-        datas = glob.glob("/home/wsantos/Documentos/dados" + str(pasta) + "/*")
+        datas = glob.glob("/home/wsantos/Documentos/dados/angulo-contato/" + str(pasta) + "/*")
         datas.sort()
         if self.timestep >= 0 and self.timestep < 10:
-            number = '/home/wsantos/Documentos/dados/teste1/RES-00'+ str(self.timestep) + '.dat'
+            number = '/home/wsantos/Documentos/dados/angulo-contato/' + str(pasta) + 'RES-00'+ str(self.timestep) + '.dat'
         elif self.timestep >= 10 and self.timestep <= 99:
-            number = '/home/wsantos/Documentos/dados/teste1/RES-0'+ str(self.timestep) + '.dat'
+            number = '/home/wsantos/Documentos/dados/angulo-contato/' + str(pasta) + '/RES-0'+ str(self.timestep) + '.dat'
         else:
-            number = '/home/wsantos/Documentos/dados/teste1/RES-'+ str(self.timestep) + '.dat'
+            number = '/home/wsantos/Documentos/dados/angulo-contato/' + str(pasta) + '/RES-'+ str(self.timestep) + '.dat'
         data =  np.loadtxt(number,skiprows=1) 
         x,y = data[:,0],data[:,1]
         
@@ -62,6 +65,7 @@ class Bubble:
                     den[i,j]=4
             
         meiox = int(np.shape(den)[0]/2)
+        cross = int(np.shape(den)[1]/2)
         
         plt.figure()
          
@@ -89,7 +93,7 @@ class Bubble:
         theta
         )
         
-    def anganim(self, g, pasta, timestep = 100, dt = 0.000089):
+    def anganim(self, g, pasta, timestep = 100, dt = 11e-6):
         '''
         Animação em vídeo Gota de óleo circundada com água.
         parameters:
@@ -102,7 +106,7 @@ class Bubble:
         theta: ângulo de contato
         '''
         
-        datas = glob.glob("/home/wsantos/Documentos/dados/" + str(pasta) + "/*")
+        datas = glob.glob("/home/wsantos/Documentos/dados/angulo-contato/" + str(pasta) + "/*")
         datas.sort()
        
         plt.tight_layout()
@@ -161,9 +165,9 @@ class Bubble:
         cmap = colors.ListedColormap(['#A3B7EC', '#D0021B','#BE7D42','#FFE19C'])
         bounds=[0.0,0.3, 0.5, 2.0, 4.0]
         norm = colors.BoundaryNorm(bounds, cmap.N)
-        return (my_anim.save('/home/wsantos/Documentos/dados/' + savevideo, writer=writervideo),
+        return (my_anim.save('/home/wsantos/Documentos/dados/angulo-contato/' + savevideo, writer=writervideo),
                 plt.imshow(list_of_datas[-1],interpolation='nearest', origin='lower',cmap=cmap, norm=norm),
                 plt.title(rf'$g^R_o$ = {g}'),
                 plt.axis('off'),
-                plt.savefig('/home/wsantos/Documentos/dados/' + savefigure)
+                plt.savefig('/home/wsantos/Documentos/dados/angulo-contato/' + savefigure, dpi = 300)
                 )
