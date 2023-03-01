@@ -155,7 +155,7 @@ def cirreg(
         axs[1, 1].imshow(listsqr[3], cmap='binary'),
         axs[1, 1].axis('off'),
         axs[1, 1].set_title(rf'por = {round(pore[3], 2)} \\ radio = {listradio[3]}', size =8, color = 'r'),
-        plt.savefig('cirreg.png', dpi=300),
+        plt.savefig(path + '/cirreg.png', dpi=300),
         #plt.subplot_tool(),
         plt.show()
 
@@ -169,9 +169,17 @@ Created on Wed Nov 30 11:45:00 2022
 
 @author: wsantos
 """
+from skimage.draw import disk
 
-
-def cirrand(lx, ly, prs, r, txtname, figname, cutoff=8, dist=2):
+path = os.path.join("/home/wsantos/Documentos/dados/cirrand" )
+Exist = os.path.exists(path)
+if Exist == False:
+    os.mkdir(path)
+else:
+    shutil.rmtree('/home/wsantos/Documentos/dados/cirrand')
+    os.mkdir(path)
+    
+def cirrand(lx, ly, prs, r, txtname = path + '/cirrand.dat', figname= path +'/cirrand.png', cutoff=8, dist=2):
     '''
     Topologia de círculos de mesmo raio distribuídos aleatoriamente 
 
@@ -186,6 +194,10 @@ def cirrand(lx, ly, prs, r, txtname, figname, cutoff=8, dist=2):
     returns:
     porosity: porosidade da topologia
     '''
+    
+
+        
+        
     mradio=math.isqrt(lx)
     sqr = np.zeros((ly, lx), dtype=np.uint8)
     # Porosidade
@@ -196,14 +208,14 @@ def cirrand(lx, ly, prs, r, txtname, figname, cutoff=8, dist=2):
 
     # int(input("Esfera de raio máximo"))
     # Discos
+
     delta_p = 100
     while delta_p >= 0.01:  # critério de convergência
         if sqr.all() != 1:
             y, x = random.randint(0, ly), random.randint(0, lx)
             if (0 < y < (ly)) and (0 < x < (lx)):
                 radio = r 
-                check_radios, check_center = disk(
-                    (y, x), radio + 2, shape=(ly, lx))  # raio de corte
+                check_radios, check_center = disk((y, x), radio + 2, shape = (ly, lx))  # raio de corte
                 radios, center = disk((y, x), radio, shape=(ly, lx))
                 if np.sum(sqr[check_radios, check_center]) == 0:
                     sqr[radios, center] = 1
@@ -234,7 +246,7 @@ def cirrand(lx, ly, prs, r, txtname, figname, cutoff=8, dist=2):
             )
 
 
-cirrand(lx = 400, ly=200, prs=0.5, r = 20,txtname='cirrand.dat', figname='cirrand.png')
+cirrand(lx = 400, ly=200, prs=0.5, r = 20)
 # %%
 
 """
@@ -298,24 +310,29 @@ def cirrand(ly, lx, prs, txtname, figname, cutoff=8, dist=2):
     return(
         plt.imshow(sqr, cmap=plt.cm.gray), plt.axis('off'),
         plt.title(rf'por = {round(porosity, 2)} \\ radio = {radio} \\ size = {lx}$\times${ly}' , size =12, color = 'r'),
-        plt.savefig(figname, dpi=300), np.savetxt(file, p + x_inlet, fmt='%i'),
-        print(f'A porosidade é {porosity}.')
+        plt.savefig(figname, dpi=300), np.savetxt(file, p + x_inlet, fmt='%i')
+        
 )
 
 cirrand(lx=400, ly=200, prs=0.61, txtname='data', figname='figure.png')
 
 
 #%%
-
+path = os.path.join("/home/wsantos/Documentos/dados/sphreg" )
+Exist = os.path.exists(path)
+if Exist == False:
+    os.mkdir(path)
+else:
+    shutil.rmtree('/home/wsantos/Documentos/dados/sphreg')
+    os.mkdir(path)
+    
+    
 def sphreg(lx, ly, lz, radio1):
     
     
-    
-    
-    
-    shutil.rmtree('/home/wsantos/Documentos/sphreg')
-    path = os.path.join("/home/wsantos/Documentos", "sphreg" )
-    os.mkdir(path)
+    # shutil.rmtree('/home/wsantos/Documentos/dados/sphreg')
+    # path = os.path.join("/home/wsantos/Documentos/dados", "sphreg" )
+    # os.mkdir(path)
     
     
     lx2 = int(lx/2)
@@ -471,14 +488,14 @@ def sphreg(lx, ly, lz, radio1):
     ax[1,1].voxels(listsqr[3], facecolors=[0, 0, 0, 0], edgecolors='k'),
     ax[1,1].set_title(rf'por = {round(pore[3], 2)} \\ radio = {listradio[3]}', size =8, color = 'r'),
     
-    plt.savefig('sphreg.png', bpm=300),
+    plt.savefig(path +'/sphreg.png', bpm=200),
     
     
     plt.show()
 
 )
 
-sphreg(lx = 90, ly = 90, lz = 90, radio1 = 30)
+sphreg(lx = 50, ly = 50, lz = 50, radio1 = 15)
 # %%
 
 
@@ -801,18 +818,11 @@ cubran(la = 140, lb = 100, lc = 200, prs = 0.84)
 from matplotlib import pyplot as plt
 import numpy as np
 import math
+from pygnuplot import gnuplot
 
-
-sand = np.fromfile('berea-sandstone.raw')
+sand = np.fromfile('/home/wsantos/Documentos/dados/complexas/berea-sandstone.raw')
 sand[np.isnan(sand)] = 0
-sqr = np.zeros(shape=(100, 100, 100), dtype=np.uint8)
-# sqr = sqr + abs(min(sqr))   
-
-# 
-
-# sqr = [ int(x) for x in sqr ]
-
-# sqr = np.array(sqr)
+sqr = np.zeros(shape=(60, 60, 60), dtype=np.uint8)
 
 
 amin, amax = min(sand), max(sand)
@@ -828,14 +838,8 @@ sand = sand.reshape(125,1000,1000)
 
 
 
-rad = 100
+rad = 60
 sqr[:rad, :rad, :rad] = sand[:rad,:rad:,:rad]
-
-#sqr = np.rint(sqr) 
-#sg = np.sum(sqr != 0)
-#print(sg)
-
-
 
 
 p = []
@@ -848,9 +852,12 @@ for k in range(len(sqr[2])):
 p = np.array(p)
 np.savetxt("sand.dat", p, fmt='%i')
 
+g = gnuplot.Gnuplot()
+g.splot('"sand.dat"')  
   
-fig = plt.figure()
-ax = plt.figure().add_subplot(projection='3d')
-ax.voxels(sqr, facecolors=[0, 0, 0, 0], edgecolors='k')
-plt.show()
+# fig = plt.figure()
+# ax = plt.figure().add_subplot(projection='3d')
+# ax.voxels(sqr, facecolors=[0, 0, 0, 0], edgecolors='k')
+# plt.savefig('comp.png', bpm = 250)
+# plt.show()
 

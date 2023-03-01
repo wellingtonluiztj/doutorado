@@ -25,11 +25,11 @@ time = 100
 
 def velfield(time):
     if time >=0 and time <10:
-        datas = glob.glob("/home/wsantos/Documentos/dados/gnu_output/RES-00" + str(time) + ".dat")
+        datas = glob.glob("/home/wsantos/Documentos/dados/permeabilidade/High/RES-00" + str(time) + ".dat")
     elif time >=10 and time <99:
-        datas = glob.glob("/home/wsantos/Documentos/dados/gnu_output/RES-0" + str(time) + ".dat")
+        datas = glob.glob("/home/wsantos/Documentos/dados/permeabilidade/High/RES-0" + str(time) + ".dat")
     else:
-        datas = glob.glob("/home/wsantos/Documentos/dados/gnu_output/RES-" + str(time) + ".dat")
+        datas = glob.glob("/home/wsantos/Documentos/dados/permeabilidade/High/RES-" + str(time) + ".dat")
     
     
     data =  np.loadtxt(datas[0],skiprows=1)

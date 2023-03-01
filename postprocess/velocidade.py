@@ -16,7 +16,7 @@ def velanim(pasta):
     dv = dx/dt
     
     
-    datas = glob.glob("/home/wsantos/Documentos/dados/permeabilidade/" + str(pasta) +"*")
+    datas = glob.glob("/home/wsantos/Documentos/dados/permeabilidade/" + str(pasta) +"/*")
     datas.sort()
     
     list_data = []
@@ -51,9 +51,11 @@ def velanim(pasta):
                   orientation='vertical')
     my_anim = animation.ArtistAnimation(fig, myimages, interval=True, blit=False, repeat=True)
     
-    video = '/home/wsantos/Documentos/dados/velocidade.mp4'
+    video = '/home/wsantos/Documentos/dados/permeabilidade/velocidade.mp4'
     writervideo = animation.FFMpegWriter(fps=6)
     my_anim.save(video, writer=writervideo)
     
-    figura = '/home/wsantos/Documentos/dados/velocidade.png'
+    figura = '/home/wsantos/Documentos/dados/permeabilidade/velocidade.png'
     plt.savefig(figura, dpi = 300)
+    
+velanim(pasta = 'High')
