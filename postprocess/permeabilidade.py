@@ -2,71 +2,46 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import glob
-from matplotlib import animation
-from matplotlib import colors
-import matplotlib as mpl
+import matplotlib.pyplot as plt
 
 
-def propr(propriedade):
-    
-    l = 0.000000174 #float(input('Lenght: '))
-    mu = 0.597#float(input('Dynamic Viscosity: '))
-    dx = 617e-7
-    dm = 2133-11 
-    dt = 308e-9 
-    dv = dx/dt
-    
-    
-    datas = glob.glob("/home/wsantos/Documentos/dados/permeabilidade/High/*")
-    datas.sort()
-    
-    
-    list_data = []
-    
-    
-    for file in datas:
-        data =  np.loadtxt(file,skiprows=1)
-        x,y = data[:,0],data[:,1] 
-        velx, vely = data[:,4], data[:,5]
-        press = data[:,6]
-        
-        
-        velx = velx.reshape((int(np.amax(x)),int(np.amax(y)))) 
-        x = x.reshape((int(np.amax(x)),int(np.amax(y)))) 
-        y = y.reshape((int(np.amax(x)),int(np.amax(y))))
-        press = press.reshape(int(np.amax(x)), int(np.amax(y)))
-        
-        
-        velx = np.transpose(velx)
-        x = np.transpose(x)
-        y = np.transpose(y)
-        press = np.transpose(press)
-        press1, press2 = np.transpose(press)[:,0], np.transpose(press)[:,-1]
-        sumpress = sum(press1 - press2)
-        sumvelx = sum(sum(velx))
-        k = mu*sumvelx/sumpress
-        
-        
-        list_data.append(propriedade) 
+# Escala característica
+
+l = 0.000000174 #float(input('Lenght: '))
+mu = 0.597#float(input('Dynamic Viscosity: '))
+dx = 617e-7
+dm = 2133-11 
+dt = 308e-9 
+dv = dx/dt
+
+
+datas = glob.glob("/home/wsantos/documentos/dados/teste1/*")#cria uma lista com os nomes dos arquivos de dados
+datas.sort()#organiza os nomes dos arquivos de dados
+
+
+list_data = [] # lista
+
+
+for file in datas: # para os arquivos dentro de datas
+    data =  np.loadtxt(file,skiprows=1) # Lê cada um dos arquivos pulando a primeira linha
+    x,y = data[:,0],data[:,1] # atribui a x e y os valores das duas primeiras colunas de dados
+    velx, vely = data[:,4], data[:,5] # atribui os valores de velocidade às colunas 4 e 5
+    press = data[:,6] # atribui os valores de pressão da coluna 6 à variável press
     
     
-    norm = mpl.colors.Normalize(vmin=0, vmax=np.max(list_data)*dv)
-    fig = plt.figure()
-    myimages = []
-    cmap = plt.colormaps['inferno']
+    velx = np.transpose(velx.reshape((int(np.amax(x)),int(np.amax(y))))) # faz um resize da coluna de velocidades na dimensão de x,y.
+    x = np.transpose(x.reshape((int(np.amax(x)),int(np.amax(y))))) # faz um resize  
+    y = np.transpose(y.reshape((int(np.amax(x)),int(np.amax(y)))))
+    press = np.transpose(press.reshape(int(np.amax(x)), int(np.amax(y))))
     
     
-    for i in list_data:
-        imgplot = plt.imshow(i, cmap=cmap, interpolation='nearest', origin='lower')
-        plt.axis('off')
-        myimages.append([imgplot])
-    plt.colorbar(plt.cm.ScalarMappable(cmap=cmap, norm = norm),
-                  orientation='vertical')
-    my_anim = animation.ArtistAnimation(fig, myimages, interval=True, blit=False, repeat=True)
-    
-    video = '/home/wsantos/Documentos/dados/permeabilidade/velocidade.mp4'
-    writervideo = animation.FFMpegWriter(fps=6)
-    my_anim.save(video, writer=writervideo)
-    
-    figura = '/home/wsantos/Documentos/dados/permeabilidade/velocidade.png'
-    plt.savefig(figura, dpi = 300)
+
+    press1, press2 = press[:,0], press[:,-1]
+    sumpress = sum(press1 - press2)
+    sumvelx = sum(sum(velx))
+    k = mu*sumvelx/sumpress
+print(k*dx)               
+
+
+plt.imshow(velx)
+

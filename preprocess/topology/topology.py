@@ -20,7 +20,6 @@ from mpl_toolkits.mplot3d import proj3d
 import shutil
 #%%
   
-
 ###############################  FORMA 1  ################################
 def cirreg(
         
@@ -37,12 +36,12 @@ def cirreg(
     returns:
     porosity: porosidade da topologia
     '''
-    path = os.path.join("/home/wsantos/Documentos/dados/cirreg" )
+    path = os.path.join("/home/wsantos/documentos/dados/pos-quali/cirreg" )
     Exist = os.path.exists(path)
     if Exist == False:
         os.mkdir(path)
     else:
-        shutil.rmtree('/home/wsantos/Documentos/dados/cirreg')
+        shutil.rmtree('/home/wsantos/documentos/dados/pos-quali/cirreg')
         os.mkdir(path)
     
     lx2 = int(lx/2)
@@ -75,7 +74,7 @@ def cirreg(
     circ4 = disk(radio4)
     listcirc = [circ1, circ2, circ3, circ4]
     
-    n = [1, 2, 3, 4]
+    n = [1, 2, 4, 8]
 
     files = []
     
@@ -156,7 +155,7 @@ def cirreg(
         axs[1, 1].axis('off'),
         axs[1, 1].set_title(rf'por = {round(pore[3], 2)} \\ radio = {listradio[3]}', size =8, color = 'r'),
         plt.savefig(path + '/cirreg.png', dpi=300),
-        #plt.subplot_tool(),
+        plt.subplot_tool(),
         plt.show()
 
         )
@@ -171,15 +170,11 @@ Created on Wed Nov 30 11:45:00 2022
 """
 from skimage.draw import disk
 
-path = os.path.join("/home/wsantos/Documentos/dados/cirrand" )
-Exist = os.path.exists(path)
-if Exist == False:
-    os.mkdir(path)
-else:
-    shutil.rmtree('/home/wsantos/Documentos/dados/cirrand')
-    os.mkdir(path)
+
     
-def cirrand(lx, ly, prs, r, txtname = path + '/cirrand.dat', figname= path +'/cirrand.png', cutoff=8, dist=2):
+def cirrand(lx, ly, prs, r, txtname = '/cirrand.dat', figname= '/cirrand.png', cutoff=8, dist=2):
+    
+    path = os.path.join("/home/wsantos/documentos/dados/pos-quali/cirrand") 
     '''
     Topologia de círculos de mesmo raio distribuídos aleatoriamente 
 
@@ -194,8 +189,13 @@ def cirrand(lx, ly, prs, r, txtname = path + '/cirrand.dat', figname= path +'/ci
     returns:
     porosity: porosidade da topologia
     '''
-    
-
+   
+    Exist = os.path.exists(path)
+    if Exist == False:
+       os.mkdir(path)
+    else:
+       shutil.rmtree('/home/wsantos/documentos/dados/pos-quali/cirrand')
+       os.mkdir(path)
         
         
     mradio=math.isqrt(lx)
@@ -232,21 +232,21 @@ def cirrand(lx, ly, prs, r, txtname = path + '/cirrand.dat', figname= path +'/ci
 
     p = np.array(p)
     x_inlet = 20
-    file = open(txtname, 'w')
+    file = open(path + txtname, 'w')
 
     return (
             
-            plt.imshow(sqr, cmap=plt.cm.gray),
+            plt.imshow(p, cmap=plt.cm.gray),
             plt.axis('off'),
             plt.title(rf'por = {round(porosity, 2)} \\ radio = {radio} \\ size = {lx}$\times${ly}' , size =12, color = 'r'),
             plt.xlabel(f'Ly = {ly}'),
-            plt.savefig(figname, dpi=300),
+            plt.savefig(path+figname, dpi=300),
             np.savetxt(file, p + x_inlet, fmt='%i'),
             
             )
 
 
-cirrand(lx = 400, ly=200, prs=0.5, r = 20)
+cirrand(lx = 400, ly=200, prs=0.9, r = 20)
 # %%
 
 """
@@ -318,16 +318,20 @@ cirrand(lx=400, ly=200, prs=0.61, txtname='data', figname='figure.png')
 
 
 #%%
-path = os.path.join("/home/wsantos/Documentos/dados/sphreg" )
+path = os.path.join("/home/wsantos/documentos/dados/pos-quali/sphreg" )
 Exist = os.path.exists(path)
 if Exist == False:
     os.mkdir(path)
 else:
-    shutil.rmtree('/home/wsantos/Documentos/dados/sphreg')
+    shutil.rmtree('/home/wsantos/documentos/dados/pos-quali/sphreg')
     os.mkdir(path)
     
     
 def sphreg(lx, ly, lz, radio1):
+    '''
+    sphreg: não é possível ter a mesma porosidade de uma vez que o raio sempre diminui pela metade. Alguma hora, 
+    a metade será um número fracionário e não teremos a mesma proporção.
+    '''
     
     
     # shutil.rmtree('/home/wsantos/Documentos/dados/sphreg')
@@ -370,7 +374,7 @@ def sphreg(lx, ly, lz, radio1):
     sph4 = ball(radio4)
     listsph = [sph1, sph2, sph3, sph4]
     
-    n = [1, 2, 3, 4]
+    n = [1, 2, 4, 8]
     
     files = []
     
@@ -495,7 +499,7 @@ def sphreg(lx, ly, lz, radio1):
 
 )
 
-sphreg(lx = 50, ly = 50, lz = 50, radio1 = 15)
+sphreg(lx = 80, ly = 80, lz = 80, radio1 = 20)
 # %%
 
 
@@ -505,8 +509,8 @@ def cubreg(lx, ly, lz, radio1):
     
     
     
-    shutil.rmtree('/home/wsantos/Documentos/cubreg')
-    path = os.path.join("/home/wsantos/Documentos", "cubreg" )
+    shutil.rmtree('/home/wsantos/documentos/dados/pos-quali/cubreg')
+    path = os.path.join("/home/wsantos/documentos/dados/pos-quali/", "cubreg" )
     os.mkdir(path)
      
     
@@ -742,9 +746,13 @@ def sphran(la, lb, lc, prs, cutoff = 6, txtname='sphran.dat', figname='sphran.pn
    
     x_inlet = 20
     file = open(txtname, 'w')
-    return ax.voxels(a), ax.set(xlabel='r', ylabel='g', zlabel='b'), ax.set_aspect('auto'), plt.show(),  plt.savefig(figname, dpi=300), np.savetxt(file, p + x_inlet, fmt='%i')
+    return (
+            ax.voxels(a), ax.set(xlabel='r', ylabel='g', zlabel='b'),
+            ax.set_aspect('auto'), plt.show(),  plt.savefig(figname, dpi=300),
+            np.savetxt(file, p + x_inlet, fmt='%i')
+            )
 
-sphran(la = 100, lb = 100, lc = 100, prs = 0.96)
+sphran(la = 100, lb = 100, lc = 100, prs = 0.93)
 # %%
 
     
@@ -820,15 +828,16 @@ import numpy as np
 import math
 from pygnuplot import gnuplot
 
-sand = np.fromfile('/home/wsantos/Documentos/dados/complexas/berea-sandstone.raw')
+sand = np.fromfile('/home/wsantos/documentos/dados/pos-quali/geometrias-complexas/berea-sandstone.raw')
 sand[np.isnan(sand)] = 0
-sqr = np.zeros(shape=(60, 60, 60), dtype=np.uint8)
+sqr = np.zeros(shape=(25, 25, 25), dtype=np.uint8)
 
 
 amin, amax = min(sand), max(sand)
 for i, val in enumerate(sand):
-    sand[i] = 500*(val-amin) / (amax-amin)
-    if sand[i] > 1:
+    sand[i] = 1200*(val-amin) / (amax-amin)
+    print(sand[i])
+    if sand[i] <= 0:
         sand[i] = 0
     else:
         sand[i] = 1
@@ -838,7 +847,7 @@ sand = sand.reshape(125,1000,1000)
 
 
 
-rad = 60
+rad = 25
 sqr[:rad, :rad, :rad] = sand[:rad,:rad:,:rad]
 
 
@@ -850,10 +859,10 @@ for k in range(len(sqr[2])):
                 p.append([i, j, k])
        
 p = np.array(p)
-np.savetxt("sand.dat", p, fmt='%i')
+np.savetxt("/home/wsantos/documentos/dados/pos-quali/geometrias-complexas/sand.txt", p, fmt='%i')
 
-g = gnuplot.Gnuplot()
-g.splot('"sand.dat"')  
+#g = gnuplot.Gnuplot()
+#g.splot('"sand.dat"')  
   
 # fig = plt.figure()
 # ax = plt.figure().add_subplot(projection='3d')

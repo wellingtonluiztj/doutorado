@@ -41,14 +41,14 @@ class Bubble:
         '''
         
 
-        datas = glob.glob("/home/wsantos/Documentos/dados/angulo-contato/" + str(pasta) + "/*")
+        datas = glob.glob("/home/wsantos/documentos/dados/quali/gota-estatica" + str(pasta) + "/*")
         datas.sort()
         if self.timestep >= 0 and self.timestep < 10:
-            number = '/home/wsantos/Documentos/dados/angulo-contato/' + str(pasta) + 'RES-00'+ str(self.timestep) + '.dat'
+            number = '/home/wsantos/documentos/dados/quali/gota-estatica' + str(pasta) + 'RES-00'+ str(self.timestep) + '.dat'
         elif self.timestep >= 10 and self.timestep <= 99:
-            number = '/home/wsantos/Documentos/dados/angulo-contato/' + str(pasta) + '/RES-0'+ str(self.timestep) + '.dat'
+            number = '/home/wsantos/documentos/dados/quali/gota-estatica' + str(pasta) + '/RES-0'+ str(self.timestep) + '.dat'
         else:
-            number = '/home/wsantos/Documentos/dados/angulo-contato/' + str(pasta) + '/RES-'+ str(self.timestep) + '.dat'
+            number = '/home/wsantos/documentos/dados/quali/gota-estatica' + str(pasta) + '/RES-'+ str(self.timestep) + '.dat'
         data =  np.loadtxt(number,skiprows=1) 
         x,y = data[:,0],data[:,1]
         
@@ -78,7 +78,7 @@ class Bubble:
         theta = 90 - theta
         cmap = colors.ListedColormap(['#A3B7EC', '#D0021B','#BE7D42','#FFE19C'])
         bounds=[0.0,0.3, 0.5, 2.0, 4.0]
-        norm = colors.BoundaryNorm(bounds, cmap.N)
+        #norm = colors.BoundaryNorm(bounds, cmap.N)
         
         
         return (plt.title(rf"$\theta$ = {round(theta, 2)}"),
@@ -89,7 +89,7 @@ class Bubble:
         plt.text(cross -10 , w - 10, r'$w$', fontdict=font),
         plt.text(10 , 10, rf'$tempo = {self.dt*self.timestep} s$', fontdict=font),
         plt.vlines(x=cross+plus, ymin=0.0, ymax=np.shape(den)[0], color='r'),
-        plt.imshow(den, interpolation='nearest', origin='lower',cmap=cmap, norm=norm),
+        plt.imshow(den, interpolation='nearest', origin='lower',cmap=cmap),
         theta
         )
         
@@ -106,7 +106,7 @@ class Bubble:
         theta: ângulo de contato
         '''
         
-        datas = glob.glob("/home/wsantos/Documentos/dados/angulo-contato/" + str(pasta) + "/*")
+        datas = glob.glob("//home/wsantos/outros-dados/dados/testes-ws" + str(pasta) + "/*")
         datas.sort()
        
         plt.tight_layout()
@@ -165,9 +165,9 @@ class Bubble:
         cmap = colors.ListedColormap(['#A3B7EC', '#D0021B','#BE7D42','#FFE19C'])
         bounds=[0.0,0.3, 0.5, 2.0, 4.0]
         norm = colors.BoundaryNorm(bounds, cmap.N)
-        return (my_anim.save('/home/wsantos/Documentos/dados/angulo-contato/' + savevideo, writer=writervideo),
+        return (my_anim.save('/home/wsantos/outros-dados/dados/testes-ws' + savevideo, writer=writervideo),
                 plt.imshow(list_of_datas[-1],interpolation='nearest', origin='lower',cmap=cmap, norm=norm),
                 plt.title(rf'$g^R_o$ = {g}'),
                 plt.axis('off'),
-                plt.savefig('/home/wsantos/Documentos/dados/angulo-contato/' + savefigure, dpi = 300)
+                plt.savefig('/home/wsantos/outros-dados/dados/testes-ws' + savefigure, dpi = 300)
                 )

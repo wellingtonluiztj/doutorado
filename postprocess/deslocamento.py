@@ -5,9 +5,9 @@ from matplotlib import colors
 from matplotlib import animation
 import pandas as pd
 
-datas = glob.glob("/home/wsantos/Documentos/dados/gnu_output/*")
+datas = glob.glob("/home/wsantos/documentos/dados/quali/teste1/*")
 datas.sort()
-data =  np.loadtxt("/home/wsantos/Documentos/dados/gnu_output/RES-003.dat",skiprows=1) 
+data =  np.loadtxt("/home/wsantos/documentos/dados/quali/teste1/RES-003.dat",skiprows=1) 
 
 
 plt.tight_layout()
@@ -45,21 +45,20 @@ for i in list_of_datas:
     cmap = colors.ListedColormap(['#A3B7EC', '#D0021B','#BE7D42','#FFE19C'])
     bounds=[0.0,0.3, 0.35, 2.0, 4.0]
     norm = colors.BoundaryNorm(bounds, cmap.N)
-    plt.title("Densidade 2")
     plt.axis('off')
     imgplot = plt.imshow(frame, interpolation='nearest', origin='lower',cmap=cmap, norm=norm)
     myimages.append([imgplot])
 
 my_anim = animation.ArtistAnimation(fig, myimages, interval=True, blit=False, repeat=True)
 
-f = '/home/wsantos/Documentos/dados/deslocamento.mp4'
+f = '/home/wsantos/documentos/dados/quali/teste1.mp4'
 writervideo = animation.FFMpegWriter(fps=6)
 my_anim.save(f, writer=writervideo)
 
 
+#%%
 
-
-def plotrec(dt, pasta):
+def plotrec(dt, pasta1,pasta2):
         
     font = {'family': 'serif',
             'color':  'black',
@@ -72,12 +71,11 @@ def plotrec(dt, pasta):
             'size': 8,
             }
     
+# High Salinity
     
     time = []
     
-    
-    
-    data = glob.glob("/home/wsantos/Documentos/dados/" + str(pasta) + "/*") # Lista os pathnames terminados em dat
+    data = glob.glob("/home/wsantos/documentos/dados/quali/teste" + str(pasta1) + "/*") # Lista os pathnames terminados em dat
     data.sort() # Organiza os nomes dos caminhos
     list_data = []
     frac = []    
@@ -115,17 +113,62 @@ def plotrec(dt, pasta):
             time.append(j*dt)
             j += 1
             
+# Low salinity
+
+    
+    time = []
+    
+    data2 = glob.glob("/home/wsantos/documentos/dados/quali/teste" + str(pasta2) + "/*") # Lista os pathnames terminados em dat
+    data2.sort() # Organiza os nomes dos caminhos
+    list_data2 = []
+    frac2 = []    
+    j2 = 0
+    bt2 = []
+    for file in data2:
+        dat2 = np.loadtxt(file, skiprows=1, usecols=[0,1,2,3]) #lê a lista data com os arquivos txt pulando linha do cabeçalho
+        den2 = dat2[:, [0,1,2,3]] # cria uma variável com colunas de dat
+        df2 = pd.DataFrame(den2) # tranforma em um DataFrame
+        df2.columns = ["X", "Y", "Den1", "Den2"] # nomea as colunas do DataFrame
+        wall_max2 = df2.iloc[ df2[ (df2["Den1"] == 0) & (df2["Den2"] == 0) ].index[-1], 0] # identifica o limite de parede 
+        df2.drop(df2[df2["X"] > wall_max2].index, inplace = True) # remove todos os valores maiores que wall
+        df2.drop(df2[df2["Den1"] == 0].index, inplace = True) # identifica os índices de df com Den1 = 0 e os remove as linhas
+        df2.drop(df2[df2["Den2"] == 0].index, inplace = True)  # identifica os índices de df com Den2 = 0 e os remove as linhas
+        df2["Den"] = df2.values[:,3] - df2.values[:,2] # Cria uma coluna Den em df cujo valor é a diferença da coluna 3 pela coluna 2 de df
+        
+        df2.loc[df2.loc[:, "Den"] < 0, "Den"] = 0 # salmoura - na coluna Den, identifica as linhas cujos valores são negativos e iguala a zero
+        df2.loc[df2.loc[:, "Den"] > 0, "Den"] = 1 # petróleo - na coluna Den, identifica as linhas cujos valores são positivos e iguala a um
+        
+        counts2 = df2["Den"].value_counts() # Conta quando de cada valor tem na coluna Den (quantos uns e quantos zeros)
+        # Aqui surge um erro pois counts deixa de ter duas linhas no final
+        if len(counts2) == 2:
+            oil2 = float(counts2[1])
+            list_data2.append(oil2)
+            fracoil2 = 100*(1-(list_data2[j2]/list_data2[0]))
+            frac2.append(fracoil2)
+            
+            time.append(j2*dt)
+            j2 += 1
+        else:
+            bt2.append(j2)
+            oil2 = 0
+            list_data2.append(oil2)
+            fracoil2 = 100*(1-(list_data2[j2]/list_data2[0]))
+            
+            frac2.append(fracoil2)
+            time.append(j2*dt)
+            j2 += 1
     
     
-    f = '/home/wsantos/Documentos/dados/'
+    f = '/home/wsantos/documentos/dados/quali/teste'
           
     return (
     plt.ylabel(rf'Oil Extraction($\%$ oil displaced)',fontdict = font),
-    plt.xlabel(rf'Time(s)', fontdict = font),
-    plt.plot(time,frac,'b',label = 'NaCl(0.50)',linewidth=1),
-    plt.axvline(x = bt[0]*dt, color = 'y', label = 'breakthrough',linestyle='dashed',
-     linewidth=1, markersize=10),
-    plt.text( 1.11*dt*bt[0], 70,  rf'${round(dt*bt[0],5)} s$', fontdict=font2),
+    plt.xlabel(rf'Time(s)', fontdict = font2),
+    plt.plot(time,frac,'b',label = 'High Slinity (100620 ppm)',linewidth=1),
+    plt.plot(time,frac2,'r',label = 'Low Slinity (29250 ppm)',linewidth=1),
+    #plt.axvline(x = bt[0]*dt, color = 'y', label = 'breakthrough',linestyle='dashed',
+     #linewidth=1, markersize=10),
+    #plt.text( 1.11*dt*bt[0], 70,  rf'${round(dt*bt[0],5)} s$', fontdict=font2),
     plt.legend(loc = "lower right"),
     plt.savefig(str(f) + "reicoveryfactor.png",dpi=300),
     plt.show()
@@ -133,4 +176,4 @@ def plotrec(dt, pasta):
     )
         
     
-plotrec(dt =  1.110e-05, pasta = 'gnu_output')
+plotrec(dt =  5.23e-06, pasta1 = 'high', pasta2 = 'low')

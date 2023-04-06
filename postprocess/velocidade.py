@@ -16,7 +16,7 @@ def velanim(pasta):
     dv = dx/dt
     
     
-    datas = glob.glob("/home/wsantos/Documentos/dados/permeabilidade/" + str(pasta) +"/*")
+    datas = glob.glob("/home/wsantos/documentos/dados/" + str(pasta) +"/*")
     datas.sort()
     
     list_data = []
@@ -41,21 +41,24 @@ def velanim(pasta):
     norm = mpl.colors.Normalize(vmin=0, vmax=np.max(list_data)*dv)
     fig = plt.figure()
     myimages = []
-    cmap = plt.colormaps['inferno']
+
     
     for i in list_data:
-        imgplot = plt.imshow(i, cmap=cmap, interpolation='nearest', origin='lower')
+        imgplot = plt.imshow(i, cmap='inferno', interpolation='nearest', origin='lower')
         plt.axis('off')
         myimages.append([imgplot])
-    plt.colorbar(plt.cm.ScalarMappable(cmap=cmap, norm = norm),
+    plt.colorbar(plt.cm.ScalarMappable(cmap='inferno', norm = norm),
                   orientation='vertical')
     my_anim = animation.ArtistAnimation(fig, myimages, interval=True, blit=False, repeat=True)
     
-    video = '/home/wsantos/Documentos/dados/permeabilidade/velocidade.mp4'
+    video = '/home/wsantos/documentos/dados/velocity.mp4'
     writervideo = animation.FFMpegWriter(fps=6)
-    my_anim.save(video, writer=writervideo)
     
-    figura = '/home/wsantos/Documentos/dados/permeabilidade/velocidade.png'
-    plt.savefig(figura, dpi = 300)
     
-velanim(pasta = 'High')
+    figura = '/home/wsantos/documentos/dados/velocity.png'
+    
+    return(
+        plt.savefig(figura, dpi = 300),
+        my_anim.save(video, writer=writervideo)    
+        ) 
+velanim('teste1')

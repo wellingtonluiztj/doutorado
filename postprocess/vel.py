@@ -25,11 +25,11 @@ time = 100
 
 def velfield(time):
     if time >=0 and time <10:
-        datas = glob.glob("/home/wsantos/Documentos/dados/permeabilidade/High/RES-00" + str(time) + ".dat")
+        datas = glob.glob("/home/wsantos/documentos/dados/teste1/RES-00" + str(time) + ".dat")
     elif time >=10 and time <99:
-        datas = glob.glob("/home/wsantos/Documentos/dados/permeabilidade/High/RES-0" + str(time) + ".dat")
+        datas = glob.glob("/home/wsantos/documentos/dados/teste1/RES-0" + str(time) + ".dat")
     else:
-        datas = glob.glob("/home/wsantos/Documentos/dados/permeabilidade/High/RES-" + str(time) + ".dat")
+        datas = glob.glob("/home/wsantos/documentos/dados/teste1/RES-" + str(time) + ".dat")
     
     
     data =  np.loadtxt(datas[0],skiprows=1)
@@ -51,14 +51,14 @@ def velfield(time):
     b = np.shape(vel[1])[0]
     
     X, Y = np.meshgrid(np.arange(0,b, 1), np.arange(0,a,1))
-    cmap = plt.colormaps['inferno']
-    M = plt.imshow(vel,cmap = cmap, interpolation='nearest', origin='lower')
+    
+    M = plt.imshow(vel,cmap = 'inferno', interpolation='nearest', origin='lower')
     Q = plt.quiver(X, Y, velx, vely, scale=0.27, width=0.0012)
     norm = mpl.colors.Normalize(vmin=0, vmax= np.max(vel*dv))
     return (
         plt.text( a-16, b-20,  rf'tempo = ${time*dt}\,s$', fontdict=font),
     plt.axis('off'),
-    plt.colorbar(mpl.cm.ScalarMappable(cmap=cmap, norm = norm),
+    plt.colorbar(mpl.cm.ScalarMappable(cmap='inferno', norm = norm),
                   orientation='vertical')
 )
 

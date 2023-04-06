@@ -1,7 +1,7 @@
 from angulocontato import Bubble
 
 
-b1 = Bubble()
+b1 = Bubble(cross=10)
 
 b1.angcont(plus = 29, pasta = 'high')
 
