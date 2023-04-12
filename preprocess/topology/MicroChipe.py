@@ -15,45 +15,51 @@ from tqdm import tqdm
 import os
 import pandas as pd
 import seaborn as sea
+import matplotlib.pyplot as plt
 
-#Import image
 
 img = cv2.imread("MicroChipe.png")
 
+
 #Resize Resolution
 cv2.imwrite("MicroChipe.png",img)
+rsize = 0.92
+inlet = 12
 
 #Convert to gray scale
 img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-img = cv2.resize(img,(0,0),fx=0.397,fy=0.397)
+
+#img = np.hstack((matplus, img))
+img = cv2.resize(img,(0,0),fx=rsize,fy=rsize)
+
+matplus = np.ones((len(img), inlet))
+img = np.concatenate((matplus, img), axis = 1)
 
 
+img = np.where(img != 0,1, img) 
 
-img = np.where(img != 0, 1, img)        
-pts = np.argwhere(img==0)
 
 coordinate = []
-
 for i in tqdm(range(len(img))):
     for j in range(len(img[0])):
         if img[i,j] ==0:
-            coordinate.append([len(img[1])-j, len(img)-i])
+            coordinate.append([(len(img[1])-j) + 10, (len(img)-i)])
 coordinate = np.array(coordinate)
 
-inlet = 40
-file = open("Poro_Complexo.dat", "w")
-np.savetxt(file, coordinate+inlet, fmt='%i')
+file = open("/home/wsantos/documentos/doutorado/doutorado/preprocess/topology/MicroChipe.dat", "w")
+
+
 
 soma_zeros = np.sum(img==0)
 soma_vac = np.sum(img!=0)
 forma = np.shape(img)
 
-
-sea.heatmap(img==0)
-
-soma_zeros
-
 porosity = soma_vac/(soma_vac + soma_zeros)
+
+np.savetxt(file, coordinate, fmt='%i')
+
+plt.imshow(img, cmap='gray')
+plt.title(rf'l_y = {len(img)}, l_x = {len(img[1])}')
 print(f'A porosidade é {porosity:.2f}')
 
 
