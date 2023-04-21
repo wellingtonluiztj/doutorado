@@ -5,9 +5,9 @@ from matplotlib import colors
 from matplotlib import animation
 import pandas as pd
 
-datas = glob.glob("/home/wsantos/documentos/dados/quali/teste1/*")
+datas = glob.glob("/home/wsantos/documentos/dados/quali/reduzido/placas paralelas/0.00/deslocamento/gnu_output/*")
 datas.sort()
-data =  np.loadtxt("/home/wsantos/documentos/dados/quali/teste1/RES-003.dat",skiprows=1) 
+data =  np.loadtxt("/home/wsantos/documentos/dados/quali/reduzido/placas paralelas/0.00/deslocamento/gnu_output/RES-003.dat",skiprows=1) 
 
 
 plt.tight_layout()
@@ -51,7 +51,7 @@ for i in list_of_datas:
 
 my_anim = animation.ArtistAnimation(fig, myimages, interval=True, blit=False, repeat=True)
 
-f = '/home/wsantos/documentos/dados/quali/teste1.mp4'
+f = '/home/wsantos/documentos/dados/quali/reduzido/placas paralelas/0.05/deslocamento/teste1.mp4'
 writervideo = animation.FFMpegWriter(fps=6)
 my_anim.save(f, writer=writervideo)
 
@@ -75,7 +75,7 @@ def plotrec(dt, pasta1,pasta2):
     
     time = []
     
-    data = glob.glob("/home/wsantos/documentos/dados/quali/teste" + str(pasta1) + "/*") # Lista os pathnames terminados em dat
+    data = glob.glob("/home/wsantos/documentos/dados/quali/reduzido/placas paralelas/0.00/" + str(pasta1) + "/*") # Lista os pathnames terminados em dat
     data.sort() # Organiza os nomes dos caminhos
     list_data = []
     frac = []    
@@ -118,7 +118,7 @@ def plotrec(dt, pasta1,pasta2):
     
     time = []
     
-    data2 = glob.glob("/home/wsantos/documentos/dados/quali/teste" + str(pasta2) + "/*") # Lista os pathnames terminados em dat
+    data2 = glob.glob("/home/wsantos/documentos/dados/quali/reduzido/placas paralelas/0.00/" + str(pasta2) + "/*") # Lista os pathnames terminados em dat
     data2.sort() # Organiza os nomes dos caminhos
     list_data2 = []
     frac2 = []    
@@ -159,16 +159,16 @@ def plotrec(dt, pasta1,pasta2):
             j2 += 1
     
     
-    f = '/home/wsantos/documentos/dados/quali/teste'
+    f = '/home/wsantos/documentos/dados/quali/reduzido/placas paralelas/0.00/'
           
     return (
     plt.ylabel(rf'Oil Extraction($\%$ oil displaced)',fontdict = font),
     plt.xlabel(rf'Time(s)', fontdict = font2),
     plt.plot(time,frac,'b',label = 'High Slinity (100620 ppm)',linewidth=1),
     plt.plot(time,frac2,'r',label = 'Low Slinity (29250 ppm)',linewidth=1),
-    #plt.axvline(x = bt[0]*dt, color = 'y', label = 'breakthrough',linestyle='dashed',
-     #linewidth=1, markersize=10),
-    #plt.text( 1.11*dt*bt[0], 70,  rf'${round(dt*bt[0],5)} s$', fontdict=font2),
+    plt.axvline(x = bt[0]*dt, color = 'y', label = 'breakthrough',linestyle='dashed',
+     linewidth=1, markersize=10),
+    plt.text( 1.11*dt*bt[0], 70,  rf'${round(dt*bt[0],5)} s$', fontdict=font2),
     plt.legend(loc = "lower right"),
     plt.savefig(str(f) + "reicoveryfactor.png",dpi=300),
     plt.show()

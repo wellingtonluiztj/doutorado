@@ -1,22 +1,20 @@
 import numpy as np
 import pandas as pd
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import glob
 from matplotlib import animation
 from matplotlib import colors
-import matplotlib as mpl
 
 
 def velanim(pasta):
-    l = 0.000000174 #float(input('Lenght: '))
-    mu = 0.597#float(input('Dynamic Viscosity: '))
-    dx = 617e-7
-    dm = 2133-11 
-    dt = 308e-9 
+    dx = 26e-6
+    dm = 1.5e-11 
+    dt = 8e-6
     dv = dx/dt
     
     
-    datas = glob.glob("/home/wsantos/documentos/dados/" + str(pasta) +"/*")
+    datas = glob.glob("/home/wsantos/documentos/dados/quali/reduzido/placas paralelas/0.00/" + str(pasta) +"/*")
     datas.sort()
     
     list_data = []
@@ -38,27 +36,31 @@ def velanim(pasta):
         list_data.append((velx**2 + vely**2)**(1/2)) 
     
     
-    norm = mpl.colors.Normalize(vmin=0, vmax=np.max(list_data)*dv)
+    norma = mpl.colors.Normalize(vmin=0, vmax=0.20) #np.max(list_data)*dv
     fig = plt.figure()
     myimages = []
 
     
     for i in list_data:
-        imgplot = plt.imshow(i, cmap='inferno', interpolation='nearest', origin='lower')
+        imgplot = plt.imshow(i, cmap='plasma', interpolation='nearest', origin='lower')
         plt.axis('off')
         myimages.append([imgplot])
-    plt.colorbar(plt.cm.ScalarMappable(cmap='inferno', norm = norm),
+        
+        
+    plt.colorbar(plt.cm.ScalarMappable(cmap='plasma', norm = norma),
                   orientation='vertical')
     my_anim = animation.ArtistAnimation(fig, myimages, interval=True, blit=False, repeat=True)
     
-    video = '/home/wsantos/documentos/dados/velocity.mp4'
+    video = '/home/wsantos/documentos/dados/quali/reduzido/placas paralelas/0.00/velocity.mp4'
     writervideo = animation.FFMpegWriter(fps=6)
+
     
-    
-    figura = '/home/wsantos/documentos/dados/velocity.png'
+    figura = '/home/wsantos/documentos/dados/quali/reduzido/placas paralelas/0.00/velocity.png'
     
     return(
         plt.savefig(figura, dpi = 300),
         my_anim.save(video, writer=writervideo)    
         ) 
-velanim('teste1')
+
+
+velanim('gnu_output')

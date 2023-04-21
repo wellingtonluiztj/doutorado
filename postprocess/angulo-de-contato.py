@@ -30,14 +30,14 @@ def angcont(plus,pluss, pasta, cross = 10, timestep = 100, dt = 11e-6):
     '''
     
 
-    datas = glob.glob("/home/wsantos/documentos/dados/quali/gota-estatica/" + str(pasta) + "/*")
+    datas = glob.glob("/home/wsantos/documentos/dados/quali/reduzido/placas-paralelas/1.72/" + str(pasta) + "/*")
     datas.sort()
     if timestep >= 0 and timestep < 10:
-        number = '/home/wsantos/documentos/dados/quali/gota-estatica/' + str(pasta) + 'RES-00'+ str(timestep) + '.dat'
+        number = '/home/wsantos/documentos/dados/quali/reduzido/placas-paralelas/1.72/' + str(pasta) + 'RES-00'+ str(timestep) + '.dat'
     elif timestep >= 10 and timestep <= 99:
-        number = '/home/wsantos/documentos/dados/quali/gota-estatica/' + str(pasta) + '/RES-0'+ str(timestep) + '.dat'
+        number = '/home/wsantos/documentos/dados/quali/reduzido/placas-paralelas/1.72/' + str(pasta) + '/RES-0'+ str(timestep) + '.dat'
     else:
-        number = '/home/wsantos/documentos/dados/quali/gota-estatica/' + str(pasta) + '/RES-'+ str(timestep) + '.dat'
+        number = '/home/wsantos/documentos/dados/quali/reduzido/placas-paralelas/1.72/' + str(pasta) + '/RES-'+ str(timestep) + '.dat'
     data =  np.loadtxt(number,skiprows=1) 
     x,y = data[:,0],data[:,1]
     
@@ -65,26 +65,27 @@ def angcont(plus,pluss, pasta, cross = 10, timestep = 100, dt = 11e-6):
     PI=3.14
     theta = theta*(180/PI)
     theta = 90 - theta
-    cmap = colors.ListedColormap(['#A3B7EC', '#D0021B','#BE7D42','#FFE19C'])
+    #cmap = colors.ListedColormap(['#A3B7EC', '#D0021B','#BE7D42','#FFE19C'])
+    cmap = colors.ListedColormap(['cyan', '#D0021B','black','darkgray'])
     bounds=[0.0,0.3, 0.5, 2.0, 4.0]
     norm = colors.BoundaryNorm(bounds, cmap.N)
     
     
     return (plt.title(rf"$\theta$ = {round(theta, 2)}"),
     plt.axis('off'),
-    plt.hlines(y=meiox, xmin=cross, xmax=cross+plus, color='r'),
-    plt.vlines(x=cross, ymin=0.0, ymax=np.shape(den)[0], color='r'),
-    plt.hlines(y=meiox, xmin=cross+plus, xmax=cross+plus+pluss, color='r'),
-    plt.vlines(x=cross++plus+pluss, ymin=0.0, ymax=np.shape(den)[0], color='b'),
+    plt.hlines(y=meiox, xmin=cross, xmax=cross+plus, color='r',  linewidth=1),
+    plt.vlines(x=cross, ymin=0.0, ymax=np.shape(den)[0], color='r', linewidth=1),
+    plt.hlines(y=meiox, xmin=cross+plus, xmax=cross+plus+pluss, color='r',  linewidth=1),
+    plt.vlines(x=cross++plus+pluss, ymin=0.0, ymax=np.shape(den)[0], color='b',  linewidth=1),
     plt.text(cross + plus/2 + pluss, w/2 + 4, r'$h$', fontdict=font),
     plt.text(cross -10 , w - 10, r'$w$', fontdict=font),
-    plt.text(10 , 10, rf'$tempo = {dt*timestep} s$', fontdict=font),
-    plt.vlines(x=cross+plus, ymin=0.0, ymax=np.shape(den)[0], color='r'),
+    #plt.text(10 , 10, rf'$tempo = {dt*timestep} s$', fontdict=font),
+    plt.vlines(x=cross+plus, ymin=0.0, ymax=np.shape(den)[0], color='r',  linewidth=1),
     plt.imshow(den, interpolation='nearest', origin='lower',cmap=cmap, norm = norm),
     theta
     )
     
-angcont(plus=47, pluss = 36, pasta='gnu_output')
+angcont(plus=46, pluss = 40, pasta='gnu_output')
 
 #%%
 
@@ -101,7 +102,7 @@ def anganim(g, pasta, timestep = 100, dt = 11e-6):
     theta: ângulo de contato
     '''
     write = 70
-    datas = glob.glob("/home/wsantos/documentos/dados/quali/gota-estatica/" + str(pasta) + "/*")
+    datas = glob.glob("/home/wsantos/documentos/dados/quali/reduzido/gota-estatica/1.72/" + str(pasta) + "/*")
     datas.sort()
    
     plt.tight_layout()
@@ -140,7 +141,8 @@ def anganim(g, pasta, timestep = 100, dt = 11e-6):
 
     for i in list_of_datas:
         frame = i
-        cmap = colors.ListedColormap(['#A3B7EC', '#D0021B','#BE7D42','#FFE19C'])
+        #cmap = colors.ListedColormap(['#A3B7EC', '#D0021B','#BE7D42','#FFE19C'])
+        cmap = colors.ListedColormap(['cyan', '#D0021B','black','darkgray'])
         bounds=[0.0,0.3, 0.5, 2.0, 4.0]
         norm = colors.BoundaryNorm(bounds, cmap.N)
         plt.title(rf'$g^R_o$ = {g}')
@@ -160,11 +162,11 @@ def anganim(g, pasta, timestep = 100, dt = 11e-6):
     cmap = colors.ListedColormap(['#A3B7EC', '#D0021B','#BE7D42','#FFE19C'])
     bounds=[0.0,0.3, 0.5, 2.0, 4.0]
     norm = colors.BoundaryNorm(bounds, cmap.N)
-    return (my_anim.save('/home/wsantos/documentos/dados/quali/gota-estatica/' + savevideo, writer=writervideo),
+    return (my_anim.save('/home/wsantos/documentos/dados/quali/reduzido/placas-paralelas/1.72/' + savevideo, writer=writervideo),
             plt.imshow(list_of_datas[-1],interpolation='nearest', origin='lower',cmap=cmap, norm=norm),
             plt.title(rf'$g^R_o$ = {g}'),
             plt.axis('off'),
-            plt.savefig('/home/wsantos/documentos/dados/quali/gota-estatica/' + savefigure, dpi = 300)
+            plt.savefig('/home/wsantos/documentos/dados/quali/reduzido/placas-paralelas/1.72/' + savefigure, dpi = 300)
             )
 
-anganim(g = 2420 , pasta = 'gnu_output')
+anganim(g = 0.168 , pasta = 'gnu_output')
