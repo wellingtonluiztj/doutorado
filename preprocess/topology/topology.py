@@ -86,31 +86,25 @@ def cirreg(
         x = int(listx[i]/2)
         y = int(listy[i]/2)
         
-        
-        listsqr[i][y-rad:y+rad, x-rad:x+rad] = listcirc[i][:-1,:-1]
-        
-        x = 0
-        y = 0
-        
-        listsqr[i][y:y+rad, x:x+rad] =  listcirc[i][rad:-1,rad:-1]
+        listsqr[i][y:y+rad+1, x:x+rad+1] =  listcirc[i][rad:,rad:]
         
         
         x = listx[i]
         y = 0
         
-        listsqr[i][:rad+1, x-rad+1:x]  = listcirc[i][rad:,1:rad]
+        listsqr[i][:rad+1, x-rad:x]  = listcirc[i][rad:,:rad]
         
         
         x = 0
         y = listy[i]
         
-        listsqr[i][y-rad+1:y, :rad+1]  = listcirc[i][1:rad, rad:]
+        listsqr[i][y-rad:y, :rad+1]  = listcirc[i][:rad, rad:]
         
         x = listx[i]
         y = listy[i]
         
-        listsqr[i][y-rad+1:y,  x-rad+1:x]  = listcirc[i][1:rad, 1:rad]
-        
+        listsqr[i][y-rad+1:y,  x-rad+1:x]  = listcirc[i][1:rad, 1:rad]        
+
         
         listsqr[i] = np.concatenate([listsqr[i]]*n[i], axis = 0) 
         listsqr[i] = np.concatenate([listsqr[i]]*n[i], axis = 1)
@@ -125,12 +119,12 @@ def cirreg(
         for u in range(len(listsqr[i])):
             for v in range(len(listsqr[i][1])):
                 if listsqr[i][u, v] == 1:
-                    p.append([v, len(listsqr[i] )-u])
+                    p.append([v + inlet, len(listsqr[i] )-u])
     
         p = np.array(p)
         
         file = path +'/cirreg' + str(i+1) + '.dat'
-        np.savetxt(file, p + inlet, fmt='%i')
+        np.savetxt(file, p , fmt='%i')
         files.append(file)
     
 
@@ -138,29 +132,29 @@ def cirreg(
     
     return ( 
 
-        fig.suptitle(rf'All geometries are shaped with {sqr1.shape[0]}$\times${sqr1.shape[1]} ', fontsize=16),
+        fig.suptitle(rf'All geometries are shaped with {(listsqr[0].shape[0])}$\times${listsqr[0].shape[1] } ', fontsize=16),
         axs[0, 0].imshow(listsqr[0], cmap='binary'),
         axs[0, 0].axis('off'),
-        axs[0, 0].set_title(rf'por = {round(pore[0], 2)} \\ radio = {listradio[0]}', size =8, color = 'r'),
+        axs[0, 0].set_title(rf'por = {round(pore[0], 2)} \\ r = {listradio[0]} ', size =8, color = 'r'),
         
         axs[0, 1].imshow(listsqr[1], cmap='binary'),
         axs[0, 1].axis('off'),
-        axs[0, 1].set_title(rf'por = {round(pore[1], 2)} \\ radio = {listradio[1]}', size =8, color = 'r'),
+        axs[0, 1].set_title(rf'por = {round(pore[1], 2)} \\ r = {listradio[1]}', size =8, color = 'r'),
         
         axs[1, 0].imshow(listsqr[2], cmap='binary'),
         axs[1, 0].axis('off'),
-        axs[1, 0].set_title(rf'por = {round(pore[2], 2)} \\ radio = {listradio[2]}', size =8, color = 'r'),
+        axs[1, 0].set_title(rf'por = {round(pore[2], 2)} \\ r = {listradio[2]}', size =8, color = 'r'),
         
         axs[1, 1].imshow(listsqr[3], cmap='binary'),
         axs[1, 1].axis('off'),
-        axs[1, 1].set_title(rf'por = {round(pore[3], 2)} \\ radio = {listradio[3]}', size =8, color = 'r'),
+        axs[1, 1].set_title(rf'por = {round(pore[3], 2)} \\ r = {listradio[3]}', size =8, color = 'r'),
         plt.savefig(path + '/cirreg.png', dpi=300),
         plt.subplot_tool(),
         plt.show()
 
         )
 
-cirreg(lx=375, ly=300, radio1= 100)
+cirreg(lx=375, ly=301, radio1= 100)
 #%%
 
 """

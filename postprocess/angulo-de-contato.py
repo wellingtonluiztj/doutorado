@@ -30,21 +30,21 @@ def angcont(plus,pluss, pasta, cross = 10, timestep = 100, dt = 11e-6):
     '''
     
 
-    datas = glob.glob("/home/wsantos/documentos/dados/quali/reduzido/placas-paralelas/1.72/" + str(pasta) + "/*")
+    datas = glob.glob("/home/wsantos/documentos/dados/quali/reduzido/placas-paralelas/" + str(pasta) + "/gnu_output/*")
     datas.sort()
     if timestep >= 0 and timestep < 10:
-        number = '/home/wsantos/documentos/dados/quali/reduzido/placas-paralelas/1.72/' + str(pasta) + 'RES-00'+ str(timestep) + '.dat'
+        number = '/home/wsantos/documentos/dados/quali/reduzido/placas-paralelas/' + str(pasta) + '/gnu_output/RES-00'+ str(timestep) + '.dat'
     elif timestep >= 10 and timestep <= 99:
-        number = '/home/wsantos/documentos/dados/quali/reduzido/placas-paralelas/1.72/' + str(pasta) + '/RES-0'+ str(timestep) + '.dat'
+        number = '/home/wsantos/documentos/dados/quali/reduzido/placas-paralelas/' + str(pasta) + '/gnu_output/RES-0'+ str(timestep) + '.dat'
     else:
-        number = '/home/wsantos/documentos/dados/quali/reduzido/placas-paralelas/1.72/' + str(pasta) + '/RES-'+ str(timestep) + '.dat'
+        number = '/home/wsantos/documentos/dados/quali/reduzido/placas-paralelas/' + str(pasta) + '/gnu_output/RES-'+ str(timestep) + '.dat'
     data =  np.loadtxt(number,skiprows=1) 
     x,y = data[:,0],data[:,1]
     
     den, wall = data[:,3], data[:,7]
     
     den = den.reshape((int(np.amax(x)),int(np.amax(y)))) 
-    wall = wall.reshape((int(np.amax(x)),int(np.amax(y))))# 
+    wall = wall.reshape((int(np.amax(x)),int(np.amax(y))))
     den = np.transpose(den)
     wall = np.transpose(wall)
     
@@ -85,11 +85,11 @@ def angcont(plus,pluss, pasta, cross = 10, timestep = 100, dt = 11e-6):
     theta
     )
     
-angcont(plus=46, pluss = 40, pasta='gnu_output')
+angcont(plus=46, pluss = 40, pasta='0.00')
 
 #%%
 
-def anganim(g, pasta, timestep = 100, dt = 11e-6):
+def anganim(g, pasta, timestep = 100, dt = 6.39e-9):
     '''
     Animação em vídeo Gota de óleo circundada com água.
     parameters:
@@ -101,8 +101,8 @@ def anganim(g, pasta, timestep = 100, dt = 11e-6):
     returns:
     theta: ângulo de contato
     '''
-    write = 70
-    datas = glob.glob("/home/wsantos/documentos/dados/quali/reduzido/gota-estatica/1.72/" + str(pasta) + "/*")
+    write = 100
+    datas = glob.glob("/home/wsantos/documentos/dados/quali/reduzido/placas-paralelas/" + str(pasta)  + "/gnu_output/*")
     datas.sort()
    
     plt.tight_layout()
@@ -159,14 +159,14 @@ def anganim(g, pasta, timestep = 100, dt = 11e-6):
     savevideo = 'angulo' + str(g) + '.mp4'
     savefigure = 'angulo' + str(g) + '.png'
     writervideo = animation.FFMpegWriter(fps=6)
-    cmap = colors.ListedColormap(['#A3B7EC', '#D0021B','#BE7D42','#FFE19C'])
+    cmap = colors.ListedColormap(['cyan', '#D0021B','black','darkgray'])
     bounds=[0.0,0.3, 0.5, 2.0, 4.0]
     norm = colors.BoundaryNorm(bounds, cmap.N)
-    return (my_anim.save('/home/wsantos/documentos/dados/quali/reduzido/placas-paralelas/1.72/' + savevideo, writer=writervideo),
+    return (my_anim.save("/home/wsantos/documentos/dados/quali/reduzido/placas-paralelas/" + str(pasta) +"/" + savevideo, writer=writervideo),
             plt.imshow(list_of_datas[-1],interpolation='nearest', origin='lower',cmap=cmap, norm=norm),
             plt.title(rf'$g^R_o$ = {g}'),
             plt.axis('off'),
-            plt.savefig('/home/wsantos/documentos/dados/quali/reduzido/placas-paralelas/1.72/' + savefigure, dpi = 300)
+            plt.savefig("/home/wsantos/documentos/dados/quali/reduzido/placas-paralelas/" + str(pasta) +"/"  + savefigure, dpi = 300)
             )
 
-anganim(g = 0.168 , pasta = 'gnu_output')
+anganim(g = 0.39 , pasta = '0.00')

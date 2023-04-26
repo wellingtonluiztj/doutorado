@@ -5,9 +5,9 @@ from matplotlib import colors
 from matplotlib import animation
 import pandas as pd
 
-datas = glob.glob("/home/wsantos/documentos/dados/quali/reduzido/placas paralelas/0.00/deslocamento/gnu_output/*")
+datas = glob.glob("/home/wsantos/documentos/dados/quali/reduzido/complexo/0.00/gnu_output/*")
 datas.sort()
-data =  np.loadtxt("/home/wsantos/documentos/dados/quali/reduzido/placas paralelas/0.00/deslocamento/gnu_output/RES-003.dat",skiprows=1) 
+data =  np.loadtxt("/home/wsantos/documentos/dados/quali/reduzido/complexo/0.00/gnu_output/RES-003.dat",skiprows=1) 
 
 
 plt.tight_layout()
@@ -51,7 +51,7 @@ for i in list_of_datas:
 
 my_anim = animation.ArtistAnimation(fig, myimages, interval=True, blit=False, repeat=True)
 
-f = '/home/wsantos/documentos/dados/quali/reduzido/placas paralelas/0.05/deslocamento/teste1.mp4'
+f = '/home/wsantos/documentos/dados/quali/reduzido/complexo/0.00/teste1.mp4'
 writervideo = animation.FFMpegWriter(fps=6)
 my_anim.save(f, writer=writervideo)
 
