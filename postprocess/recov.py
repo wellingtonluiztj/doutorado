@@ -26,12 +26,12 @@ font2 = {'family': 'serif',
 '''
 Concentração de Na igual a 0.00
 '''
-time = []
+time1 = []
 data = glob.glob( str(pasta1) + "/gnu_output/*.dat") # Lista os pathnames terminados em dat
 data.sort() # Organiza os nomes dos caminhos
 list_data = []
 frac = []    
-j = 0
+k = 0
 bt1 = []
 
 
@@ -52,31 +52,49 @@ for file in tqdm(data):
     if len(counts) == 2:
         oil = float(counts[1])
         list_data.append(oil)
-        fracoil = 100*(1-(list_data[j]/sum(counts)))
+        fracoil = 100*(1-(list_data[k]/sum(counts)))
         frac.append(fracoil)
-
-        j += 1
+        time1.append(k*dt)
+        k += 1
     else:
-        bt1.append(j)
+        bt1.append(k)
         oil = 0
         list_data.append(oil)
-        fracoil = 100*(1-(list_data[j]/sum(counts)))
+        fracoil = 100*(1-(list_data[k]/sum(counts)))
         frac.append(fracoil)
- 
-        j += 1
+        time1.append(k*dt)
+        k += 1
         
       
 
 '''
 Concentração de Na igual a 0.05
 '''
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import glob
+from tqdm import tqdm
+
+
+
+dt =  1.110e-08
+pasta1 = '0.00'
+pasta2 = '0.05'
+pasta3 = '1.72' 
+    
+
+
+
 data2 = glob.glob( str(pasta2) + "/gnu_output/*.dat") # Lista os pathnames terminados em dat
-frac2 = []    
+data2.sort()
+frac2 = []
+time2 = []    
 bt2 = []
 list_data2 = []
-j = 0
+i = 0
 for file2 in tqdm(data2):
-    dat2 = np.loadtxt(file, skiprows=1, usecols=[0,1,2,3]) #lê a lista data com os arquivos txt pulando linha do cabeçalho
+    dat2 = np.loadtxt(file2, skiprows=1, usecols=[0,1,2,3]) #lê a lista data com os arquivos txt pulando linha do cabeçalho
     den2 = dat2[:, [0,1,2,3]] # cria uma variável com colunas de dat
     df2 = pd.DataFrame(den2) # tranforma em um DataFrame
     df2.columns = ["X", "Y", "Den1", "Den2"] # nomea as colunas do DataFrame
@@ -92,29 +110,31 @@ for file2 in tqdm(data2):
     if len(counts2) == 2:
         oil2 = float(counts2[1])
         list_data2.append(oil2)
-        fracoil2 = 100*(1-(list_data2[j]/sum(counts2)))
+        fracoil2 = 100*(1-(list_data2[i]/sum(counts2)))
         frac2.append(fracoil2)
-
-        j += 1
+        time2.append(i*dt)
+        i += 1
     else:
-        bt2.append(j)
+        bt2.append(i)
         oil2 = 0
         list_data2.append(oil2)
-        fracoil2 = 100*(1-(list_data2[j]/sum(counts2)))
+        fracoil2 = 100*(1-(list_data2[i]/sum(counts2)))
         frac2.append(fracoil2)
-
-        j += 1
+        time2.append(i*dt)
+        i += 1
 '''
 Concentração de Na igual a 1.72
 '''
 data3 = glob.glob( str(pasta3) + "/gnu_output/*.dat") # Lista os pathnames terminados em dat
+data3.sort()
 frac3 = []    
 bt3 = []
+time3 = []
 list_data3 = []
 j = 0
 
-for file in tqdm(data3):
-    dat3 = np.loadtxt(file, skiprows=1, usecols=[0,1,2,3]) #lê a lista data com os arquivos txt pulando linha do cabeçalho
+for file3 in tqdm(data3):
+    dat3 = np.loadtxt(file3, skiprows=1, usecols=[0,1,2,3]) #lê a lista data com os arquivos txt pulando linha do cabeçalho
     den3 = dat3[:, [0,1,2,3]] # cria uma variável com colunas de dat
     df3 = pd.DataFrame(den3) # tranforma em um DataFrame
     df3.columns = ["X", "Y", "Den1", "Den2"] # nomea as colunas do DataFrame
@@ -132,7 +152,7 @@ for file in tqdm(data3):
         list_data3.append(oil3)
         fracoil3 = 100*(1-(list_data3[j]/sum(counts3)))
         frac3.append(fracoil3)
-        time.append(j*dt)
+        time3.append(j*dt)
         j += 1
     else:
         bt3.append(j)
@@ -140,7 +160,7 @@ for file in tqdm(data3):
         list_data3.append(oil3)
         fracoil3 = 100*(1-(list_data3[j]/sum(counts3)))
         frac3.append(fracoil3)
-        time.append(j*dt)
+        time3.append(j*dt)
         j += 1
  
 
@@ -148,17 +168,17 @@ for file in tqdm(data3):
 
 plt.ylabel(rf'Oil Extraction($\%$ oil displaced)',fontdict = font)
 plt.xlabel(rf'Time(s)', fontdict = font)
-plt.plot(time,frac,'b',label = 'NaCl(0.00)',linewidth=1, linestyle='dotted')
-plt.axvline(time[len(list_data)-1], color = 'y', label = 'breakthrough',linestyle='dashed', linewidth=1, markersize=10)
-plt.text(time[len(list_data)-1], frac[int(len(frac)/2)], rf'${round(dt*time[-1],5)} s$', fontdict=font2)
+plt.plot(time1,frac,'b',label = 'NaCl(0.00)',linewidth=1, linestyle='solid')
+plt.axvline(time1[len(list_data)-1], color = 'y', label = 'breakthrough',linestyle='dashed', linewidth=1, markersize=10)
+plt.text(time1[len(list_data)-1], frac[int(len(frac)/2)], rf'${round(dt*time1[-1],5)} s$', fontdict=font2)
 
-plt.plot(time,frac2,'r',label = 'NaCl(0.05)',linewidth=1, linestyle='dotted')
-plt.axvline(time[len(list_data2)-1], color = 'y', label = 'breakthrough',linestyle='dashed', linewidth=1, markersize=10)
-plt.text(time[len(list_data2)-1], frac[int(len(frac2)/2)], rf'${round(dt*time[-1],5)} s$', fontdict=font2)
+plt.plot(time2,frac2,'r',label = 'NaCl(0.05)', linewidth=1, linestyle='solid')
+plt.axvline(time2[len(list_data2)-1], color = 'y', label = 'breakthrough',linestyle='dashed', linewidth=1, markersize=10)
+plt.text(time2[len(list_data2)-1], frac2[int(len(frac2)/2)], rf'${round(dt*time2[-1],5)} s$', fontdict=font2)
 
-plt.plot(time,frac3,'-g',label = 'NaCl(1.72)',linewidth=1, linestyle='dotted')
-plt.axvline(time[len(list_data3)-1], color = 'y', label = 'breakthrough',linestyle='dashed', linewidth=1, markersize=10)
-plt.text(time[len(list_data3)-1], frac[int(len(frac3)/2)], rf'${round(dt*time[-1],5)} s$', fontdict=font2)
+plt.plot(time3,frac3,'-g',label = 'NaCl(1.72)', linewidth=1, linestyle='solid')
+plt.axvline(time3[len(list_data3)-1], color = 'y', label = 'breakthrough',linestyle='dashed', linewidth=1, markersize=10)
+plt.text(time3[len(list_data3)-1], frac3[int(len(frac3)/2)], rf'${round(dt*time3[-1],5)} s$', fontdict=font2)
 
 
 plt.legend(loc = "lower right")
@@ -167,3 +187,4 @@ plt.show()
 
         
     
+
